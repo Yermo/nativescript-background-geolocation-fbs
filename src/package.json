@@ -48,13 +48,13 @@
     "homepage": "https://github.com/Yermo/nativescript-background-geolocation-fbs",
     "readmeFilename": "README.md",
     "devDependencies": {
-        "tns-core-modules": "^5.0.0",
-        "tns-platform-declarations": "^5.0.0",
-        "typescript": "~3.3.3",
         "prompt": "^1.0.0",
         "rimraf": "^2.6.3",
+        "semver": "^5.6.0",
+        "tns-core-modules": "^5.3.1",
+        "tns-platform-declarations": "^5.0.0",
         "tslint": "^5.12.1",
-        "semver": "^5.6.0"
+        "typescript": "~3.3.3"
     },
     "dependencies": {},
     "bootstrapper": "nativescript-plugin-seed"
