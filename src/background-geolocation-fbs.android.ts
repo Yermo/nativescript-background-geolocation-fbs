@@ -6,13 +6,21 @@ declare const com: any;
 
 // export class BackgroundGeolocationFbs extends Common {
 
+// without the extends and the return global.__native(this) in the constructor
+// it errors out with "Cannot marshal JavaScript argument [object Object] at index 1 to Java type"
+
 export class BackgroundGeolocationFbs extends com.marianhello.bgloc.PluginDelegate {
 
   private bgGeo : any;
 
   // ------------------------------------------------------------
 
-  constructor() {
+  /**
+  *
+  * @link https://discourse.nativescript.org/t/marshalling-help/5537
+  */
+
+  constructor() {                                                                                                                   
 
     super();
 
