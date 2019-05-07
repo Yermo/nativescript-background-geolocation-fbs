@@ -34,6 +34,9 @@ To simulate GPS locations on a live device I have been using the "Lockito" app w
 
 https://play.google.com/store/apps/details?id=fr.dvilleneuve.lockito&hl=en_US
 
+After installing the app, you must enable it in developer options. The setting under Developers Options
+is *** Select mock locations app ***.
+
 If you are under Linux or MacOSX, there is a script in ./etc/fake_gps.sh that will 
 feed locations to the lockito app for testing. You must have the Android SDK installed and
 the 'adb' command must be in your path.
