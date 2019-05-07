@@ -14,12 +14,14 @@ the current location.
 
 You must have NativeScript installed and the 'tns' command must be in your path.
 
-To run it on Android:
+To run it on Android in an emulator:
 
 ```
 cd src
 npm run ngdemo.android
 ```
+
+### Running the demo on a live device with simulated location data
 
 Simulating GPS locations in the Android emulator, at least in my experience under Ubuntu, is ridiculously
 slow so I use a real device for testing.
@@ -43,7 +45,7 @@ the 'adb' command must be in your path.
 
 You should see the location data update.
 
-iOS support is currently not implemented but I will get to that soon.
+*** iOS support is currently not implemented but I will get to that soon. ***
 
 ## Submitting issues
 
