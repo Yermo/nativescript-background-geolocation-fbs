@@ -268,6 +268,11 @@ class BackgroundGeolocationDelegate extends com.marianhello.bgloc.PluginDelegate
 
     let location : Location = new Location();
 
+    // FIXME: console.log( "...", location) will crash after about 12,000 locations or so
+    // even if we return the following hard coded object each time leading me to believe
+    // the NativeScript console.log crash is not related directly to JSONobject.
+
+/*
     location.id = 1;
 
     location.provider = 'test';
@@ -291,8 +296,8 @@ class BackgroundGeolocationDelegate extends com.marianhello.bgloc.PluginDelegate
     location.isFromMockProvider = true;
 
     location.mockLocationsEnabled = true;
+*/
 
-/*
     // sadly it seems that if we attempt to get a value that is not present it 
     // throws an exception and that seem to be a number of circumstances where not
     // all values are present. As a result, these handstands are needed.
@@ -370,8 +375,6 @@ class BackgroundGeolocationDelegate extends com.marianhello.bgloc.PluginDelegate
     } else {
       location.mockLocationsEnabled = bgLocation.getBoolean( 'mockLocationsEnabled' );
     }
-
-*/
 
     console.log( "BackgroundGeolocationDelegate::convertLocation(): bottom" );
 

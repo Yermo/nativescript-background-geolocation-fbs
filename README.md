@@ -7,7 +7,7 @@ API relies heavily on promises instead of the callback structure used by the cor
 
 The majority of this documentation comes from the cordova plugin repository managed by @mauron85.
 
-## Running the demo
+## Running the demo on Android
 
 I've put together a demo using NativeScript + Angular in ./ngdemo that loads the plugin and displays the raw data of
 the current location.
@@ -18,8 +18,12 @@ To run it on Android in an emulator:
 
 ```
 cd src
+npm install
 npm run ngdemo.android
 ```
+
+The emulator supports simulating GPS locations. Open up the Extended Controls screen
+and check out the Location page.
 
 ### Running the demo on a live device with simulated location data
 
