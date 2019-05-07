@@ -1,11 +1,202 @@
 /* Include.gradle configuration: http://docs.nativescript.org/plugins/plugins#includegradle-specification */
 
+/**
+* Build configuration
+* copied with edits from the background-geolocation-android project
+*
+* It looks like the depend-encies for background-geolocation-android are not included in the generated
+* aar file. By including all this mess here, it seems to work, however there has to be a cleaner way. 
+*
+* NOTE: adding the word depend-encies (without the hyphen) will break the gradle build)
+
+* FIXME: I do not yet understand why I get "Could not get unknown property" if I structure the gradle file
+* the way it is done in the background-geolocation-android project. I suspect it's because of how
+* the NativeScript android platform processes gradle files.
+*
+* @link https://github.com/NativeScript/android-runtime/issues/1353
+*/
+
+import org.gradle.util.GradleVersion
+
 android {
 	
 }
 
 dependencies {
-    // Describe plugin native Android dependencies like
+
+	def DEFAULT_COMPILE_SDK_VERSION = 17
+	def DEFAULT_BUILD_TOOLS_VERSION = "27.0.3"
+	def DEFAULT_TARGET_SDK_VERSION = 17
+	def DEFAULT_MIN_SDK_VERSION = 16
+	def DEFAULT_PLAY_SERVICES_VERSION = "11+"
+	def DEFAULT_SUPPORT_LIB_VERSION = "27.1.1"
+
+	def MOCKITO_CORE_VERSION = "1.10.19"
+	def POWERMOCK_VERSION = "1.6.2"
+	def ROBOLECTRIC_VERSION = "3.0"
+	def UI_AUTOMATOR_VERSION = "2.1.2"
+	def JUNIT_VERSION = "4.12"
+	def FEST_ASSERT_CORE_VERSION = "2.0M10"
+	def SUPPORT_TEST_VERSION = "1.0.1"
+	def RESOURCE_PREFIX = "mauron85_bgloc_"
+
+	ext {
+	    getApplicationId = { ->
+	        def applicationId = "com.marianhello.app"
+        	if (findProject('..:app') != null) {
+	            applicationId = project('..:app').android.defaultConfig.applicationId
+        	}
+
+        	return applicationId
+	    }
+
+	    getPlayServicesVersion = { ->
+        	// Check for application-defined play-services version
+	        def playServicesVersion = DEFAULT_PLAY_SERVICES_VERSION
+        	if (rootProject.hasProperty('playServicesVersion')) {
+	            playServicesVersion = rootProject.playServicesVersion
+	        } else if (rootProject.hasProperty('googlePlayServicesVersion')) {
+        	    playServicesVersion = rootProject.googlePlayServicesVersion
+	        }
+
+        	return playServicesVersion
+	    }
+
+	    getSupportLibVersion = { ->
+        	def supportLibVersion = DEFAULT_SUPPORT_LIB_VERSION
+	        if (rootProject.hasProperty('supportLibVersion')) {
+        	    supportLibVersion = rootProject.supportLibVersion
+	        }
+        	return supportLibVersion
+	    }
+
+	    getCompileSdkVersion = { ->
+        	def compileSdkVersion = DEFAULT_COMPILE_SDK_VERSION
+	        if (rootProject.hasProperty('compileSdkVersion')) {
+        	    compileSdkVersion = rootProject.compileSdkVersion
+	        }
+        	return compileSdkVersion
+	    }
+
+	    getBuildToolsVersion = { ->
+        	def buildToolsVersion = DEFAULT_BUILD_TOOLS_VERSION
+	        if (rootProject.hasProperty('buildToolsVersion')) {
+	            buildToolsVersion = rootProject.buildToolsVersion
+        	}
+	        return buildToolsVersion
+	    }
+
+	    getTargetSdkVersion = { ->
+        	def targetSdkVersion = DEFAULT_TARGET_SDK_VERSION
+	        if (rootProject.hasProperty('targetSdkVersion')) {
+        	    targetSdkVersion = rootProject.targetSdkVersion
+	        }
+        	return targetSdkVersion
+	    }
+
+	    getMinSdkVersion = { ->
+        	def minSdkVersion = DEFAULT_MIN_SDK_VERSION
+	        if (rootProject.hasProperty('minSdkVersion')) {
+        	    minSdkVersion = rootProject.minSdkVersion
+	        }
+        	return minSdkVersion
+	    }
+
+	    getGradle3Support = { ->
+        	if (rootProject.hasProperty('gradle3EXPERIMENTAL')) {
+	            return true
+        	}
+	        def gradleVersionCurrent = GradleVersion.current()
+        	if (gradleVersionCurrent >= GradleVersion.version('4.4')) {
+	            println "Enabling gradle3EXPERIMENTAL support for gradle $gradleVersionCurrent"
+        	    return true
+	        }
+        	return false
+	    }
+
+	    getResourcePrefix = { ->
+        	return RESOURCE_PREFIX
+	    }
+
+	    androidLibs = [
+        	supportAnnotations: [group: 'com.android.support', name: 'support-annotations', version: '23.1.1'],
+	        supportCompat: [group: 'com.android.support', name: 'support-compat', version: getSupportLibVersion()],
+        	appcompat: [group: 'com.android.support', name: 'appcompat-v7', version: getSupportLibVersion()],
+	        playServicesLocation: [group: 'com.google.android.gms', name: 'play-services-location', version: getPlayServicesVersion()],
+	    ]
+
+	    libs = [
+        	permissions: [group: 'com.intentfilter', name: 'android-permissions', version: '0.1.7'],
+	        logback: [group: 'com.github.tony19', name: 'logback-android', version: '1.1.1-9'],
+	        slf4j: [group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'],
+	        promise: [group: 'com.github.jparkie', name: 'promise', version: '1.0.3'],
+	    ]
+	}
+
+	def applicationId = getApplicationId()
+	def hasGradle3Support = getGradle3Support()
+	def resourcePrefix = getResourcePrefix()
+	def supportLibVersion = getSupportLibVersion()
+	def googlePlayServicesVersion = getPlayServicesVersion()
+
+	def oreoDependencies = [
+	    [configuration: "implementation", dependency: androidLibs.playServicesLocation],
+	    [configuration: "implementation", dependency: androidLibs.supportCompat],
+	    [configuration: "implementation", dependency: androidLibs.appcompat],
+	    [configuration: "implementation", dependency: libs.permissions],
+	    [configuration: "implementation", dependency: libs.logback],
+	    [configuration: "implementation", dependency: libs.slf4j],
+	    [configuration: "implementation", dependency: libs.promise]
+	]
+
+	def preoreoDependencies = [
+	    [configuration: "compile", dependency: androidLibs.playServicesLocation],
+	    [configuration: "oreoCompile", dependency: androidLibs.supportCompat],
+	    [configuration: "compile", dependency: androidLibs.appcompat],
+	    [configuration: "compile", dependency: libs.permissions],
+	    [configuration: "compile", dependency: libs.logback],
+	    [configuration: "compile", dependency: libs.slf4j],
+	    [configuration: "compile", dependency: libs.promise]
+	]
+
+	println "******************************************************************"
+	println "* nativescript-background-geolocation-fbs"
+	println "* - applicationId: $applicationId"
+	println "* - resourcePrefix: $resourcePrefix"
+	println "* - googlePlayServicesVersion: $googlePlayServicesVersion"
+	println "* - supportLibVersion: $supportLibVersion"  
+	println "******************************************************************"
+
+	// Describe plugin native Android dependencies like
 	// implementation "groupName:pluginName:ver" 
-    // EXAMPLE: implementation "com.facebook.fresco:fresco:0.9.0+"
+	// EXAMPLE: implementation "com.facebook.fresco:fresco:0.9.0+"
+
+        oreoDependencies.each {
+            add(it.configuration, it.dependency)
+        }
+
+/*
+    if (hasGradle3Support) {
+        oreoDependencies.each {
+            add(it.configuration, it.dependency)
+        }
+    } else {
+        preoreoDependencies.each {
+            add(it.configuration, it.dependency)
+        }
+    }
+
+        oreoDependencies.each {
+            add(it.configuration, it.dependency)
+        }
+
+	add( "implementation", androidLibs.playServicesLocation )
+	add( "implementation", androidLibs.supportCompat )
+	add( "implementation", androidLibs.appcompat )
+	add( "implementation", libs.permissions )
+	add( "implementation", libs.logback )
+	add( "implementation", libs.slf4j )
+	add( "implementation", libs.promise )
+*/
+
 }

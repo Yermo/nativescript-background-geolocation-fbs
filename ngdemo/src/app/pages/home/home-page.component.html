@@ -1,0 +1,38 @@
+<DockLayout stretchLastChild="true" backgroundColor="#282E4B">
+  <StackLayout orientation="vertical" dock="top">
+    <GridLayout columns="auto,auto" rows="auto">
+      <Button row="0" col="0" text="Start" (tap)="start()" class="btn btn-primary"></Button>
+      <Button row="0" col="1" text="Stop" (tap)="stop()" class="btn button-info"></Button>
+    </GridLayout>
+
+    <GridLayout columns="*, *" rows="auto, auto" class="m-y-30 m-x-20">
+      <!-- Run Time -->
+      <Label [text]="runtime$ | async" row="0" col="0" class="large text-left" color="#C2C8E6"></Label>
+      <Label text="Runtime" row="1" col="0" class="body small text-left" fontSize="35" color="#C2C8E6"></Label>
+      <!-- Current Location -->
+      <Label *ngIf="locations$ | async as location" text="{{ location.id }}" row="0" col="1" class="large text-right" color="#89D5E2"></Label>
+      <Label text="Locations" row="1" col="1" class="body small text-right" fontSize="35" color="#89D5E2"></Label>
+    </GridLayout>
+  </StackLayout>
+
+  <StackLayout orientation="vertical" horizontalAlignment="center" class="m-t-30" backgroundColor="#2C3251">
+
+    <GridLayout columns="auto,auto,auto" rows="auto,auto,auto,auto" class="p-l-20">
+      <ng-container  *ngIf="locations$ | async as location">
+        <Label row="0" col="0" colspan="3" horizontalAlignment="center" text="Time Stamp: {{location.time | date: 'mediumTime'}}" class="h3 p-l-15" color="#89D5E2"></Label>
+
+        <Label row="1" col="0" text="lat: {{location.latitude | number:'1.2-5'}}" class="h3 p-l-15" color="#89D5E2"></Label>
+        <Label row="1" col="1" text="lng: {{location.longitude | number: '1.2-5'}}" class="h3 p-l-15" color="#89D5E2"></Label>
+        <Label row="1" col="2" text="alt: {{location.altitude | number: '1.2-5'}}" class="h3 p-l-15" color="#89D5E2"></Label>
+
+        <Label row="2" col="0" text="speed: {{location.spoeed | number: '1.2-5'}}" class="h3 p-l-15" color="#89D5E2"></Label>
+        <Label row="2" col="1" text="bearing: {{location.bearing | number: '1.2-5'}}" class="h3 p-l-15" color="#89D5E2"></Label>
+        <Label row="2" col="2" text="accuracy: {{location.accuracy | number: '1.2-5'}}" class="h3 p-l-15" color="#89D5E2"></Label>
+
+        <Label row="3" col="0" text="provider: {{location.provider}}" class="h3 p-l-15" color="#89D5E2"></Label>
+        <Label row="3" col="1" text="locationProvider: {{location.locationProvider}}" class="h3 p-l-15" color="#89D5E2"></Label>
+
+        </ng-container>
+      </GridLayout>
+    </StackLayout>
+</DockLayout>
