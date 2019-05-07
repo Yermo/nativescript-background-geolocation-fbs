@@ -1,13 +1,20 @@
 /* Include.gradle configuration: http://docs.nativescript.org/plugins/plugins#includegradle-specification */
 
-// copied with edits from the background-geolocation-android project
-//
-// It looks like the dependencies for background-geolocation-android are not included in the generated
-// aar file. By including all this mess here, it seems to work, however there has to be a cleaner way. 
- 
-// FIXME: I do not yet understand why I get "Could not get unknown property" if I structure the gradle file
-// the way it is done in the background-geolocation-android project. I suspect it's because of how
-// the NativeScript android platform processes gradle files.
+/**
+* Build configuration
+* copied with edits from the background-geolocation-android project
+*
+* It looks like the depend-encies for background-geolocation-android are not included in the generated
+* aar file. By including all this mess here, it seems to work, however there has to be a cleaner way. 
+*
+* NOTE: adding the word depend-encies (without the hyphen) will break the gradle build)
+
+* FIXME: I do not yet understand why I get "Could not get unknown property" if I structure the gradle file
+* the way it is done in the background-geolocation-android project. I suspect it's because of how
+* the NativeScript android platform processes gradle files.
+*
+* @link https://github.com/NativeScript/android-runtime/issues/1353
+*/
 
 import org.gradle.util.GradleVersion
 
@@ -17,9 +24,9 @@ android {
 
 dependencies {
 
-	def DEFAULT_COMPILE_SDK_VERSION = 27
+	def DEFAULT_COMPILE_SDK_VERSION = 17
 	def DEFAULT_BUILD_TOOLS_VERSION = "27.0.3"
-	def DEFAULT_TARGET_SDK_VERSION = 26
+	def DEFAULT_TARGET_SDK_VERSION = 17
 	def DEFAULT_MIN_SDK_VERSION = 16
 	def DEFAULT_PLAY_SERVICES_VERSION = "11+"
 	def DEFAULT_SUPPORT_LIB_VERSION = "27.1.1"
@@ -169,6 +176,20 @@ dependencies {
         }
 
 /*
+    if (hasGradle3Support) {
+        oreoDependencies.each {
+            add(it.configuration, it.dependency)
+        }
+    } else {
+        preoreoDependencies.each {
+            add(it.configuration, it.dependency)
+        }
+    }
+
+        oreoDependencies.each {
+            add(it.configuration, it.dependency)
+        }
+
 	add( "implementation", androidLibs.playServicesLocation )
 	add( "implementation", androidLibs.supportCompat )
 	add( "implementation", androidLibs.appcompat )
