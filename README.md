@@ -428,7 +428,7 @@ BackgroundGeolocation.switchMode(BackgroundGeolocation.FOREGROUND_MODE);
 
 // switch to BACKGROUND mode
 BackgroundGeolocation.switchMode(BackgroundGeolocation.BACKGROUND_MODE);
-<ScrollWheelDown>```
+```
 
 ### forceSync()
 Platform: Android, iOS
