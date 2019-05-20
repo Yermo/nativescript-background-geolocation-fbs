@@ -126,7 +126,7 @@ class BackgroundGeolocationDelegate extends com.marianhello.bgloc.PluginDelegate
 
       // FIXME: the following line crashes after about 12,000 iterations or it crashes in the callback. See ngdemo location.service.ts. 
 
-      console.log( "BackgroundGeolocationDelege::onLocationChanged(): bgLocation converted to location:", location );
+      // console.log( "BackgroundGeolocationDelege::onLocationChanged(): bgLocation converted to location:", location );
 
       this.callbacks[ 'location' ].forEach( ( callback ) => {
         callback( location );
@@ -264,7 +264,12 @@ class BackgroundGeolocationDelegate extends com.marianhello.bgloc.PluginDelegate
 
   convertLocation( bgLocation ) {
 
-    console.log( "BackgroundGeolocationDelegate::convertLocation(): got background location:", bgLocation );
+    // FIXME: My suspicion is that there's something in this method, possibly this console.log call that's
+    // causing console.log() crashes later on.
+    //
+    // console.log( "BackgroundGeolocationDelegate::convertLocation(): got background location:", bgLocation );
+
+    console.log( "BackgroundGeolocationDelegate::convertLocation(): top." );
 
     let location : Location = new Location();
 
@@ -947,9 +952,21 @@ export class BackgroundGeolocationFbs extends Common {
     
         console.log( "BackgroundGeolocationFbs::destroy()" );
 
-        this.bgGeo.destroy();
+        // FIXME: Under Android 9+, destroy() doesn't seem to destroy the app completely
+        // if geolocation is running. So we make sure it's stopped here.
 
-        resolve( true );
+        this.stop().then( () => {
+
+setTimeout( () => {
+
+          console.log( "BackgroundGeolocationFbs::destory(): after timeout calling destroy" );
+
+          this.bgGeo.destroy();
+          resolve( true );
+}, 1500 );
+
+
+        });
 
       } catch( error ) {
         reject( error );

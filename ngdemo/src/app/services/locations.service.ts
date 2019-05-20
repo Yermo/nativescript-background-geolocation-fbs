@@ -38,8 +38,13 @@ export class LocationsService {
   locationsSubject : Subject<any>;
 
   constructor() {
+
+    console.log( "LocationsService::constructor(): top." );
+
     this.bgGeo = null;
     this.numLocations = 0;
+    this.started = false;
+    this.foreground = true;
 
     // updates for this segment are pushed onto this subject
 
@@ -54,13 +59,16 @@ export class LocationsService {
     });
 
     applicationOn( resumeEvent, (args: ApplicationEventData ) => {
+
+      console.log( "LocationsService::constructor(): resume event. started is:", this.started );
+
       this.foreground = true;
 
       // it may be a few moments before we get a location so send the last location to
       // anyone who is interested. But we only do this if geolocation tracking has been started.
 
       if ( this.started ) {
-        console.log( "LocationsService::constructor(): resume event. Sending last location" );
+        console.log( "LocationsService::constructor(): resume event. '" + this.numLocations + "' locations. Sending last location." );
         this.locationsSubject.next( this.lastLocation );
       }
 
@@ -85,10 +93,13 @@ export class LocationsService {
     // if we're already configured, just return a resolved promise. 
 
     if ( this.bgGeo ) {
+      console.log( "LocationService::configure(): already started" );
       return Promise.resolve();
     }
 
     return new Promise( ( resolve, reject ) => {
+
+      console.log( "LocationService::configure(): configuring background geolocation plugin." );
 
       this.bgGeo = new BackgroundGeolocationFbs();
 
@@ -117,9 +128,13 @@ export class LocationsService {
         interval: 1,
         fastestInterval: 1,
         activitiesInterval: 1,
-        startForeground: true
+        startForeground: false
       }).then( () => {
 
+        // FIXME: attempting to force gc() crash
+
+        setTimeout( () => { gc(); }, 1000);
+ 
         // subscribe the location updates.
 
         this.bgGeo.on( 'location', ( location ) => {
@@ -153,8 +168,8 @@ export class LocationsService {
     console.log( "LocationsService::onLocation(): got location " + this.numLocations );
 
     // sometimes it crashes here. 
-
-    console.log( "LocationsService::onLocation(): location is :", location );
+    //
+    // console.log( "LocationsService::onLocation(): location is :", location );
 
     this.lastLocation = location;
 

@@ -103,6 +103,10 @@ dependencies {
 	    }
 
 	    getGradle3Support = { ->
+
+		return true;
+
+/*
         	if (rootProject.hasProperty('gradle3EXPERIMENTAL')) {
 	            return true
         	}
@@ -112,6 +116,7 @@ dependencies {
         	    return true
 	        }
         	return false
+*/
 	    }
 
 	    getResourcePrefix = { ->
