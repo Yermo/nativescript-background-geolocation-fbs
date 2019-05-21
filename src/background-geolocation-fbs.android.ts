@@ -32,6 +32,13 @@ class BackgroundGeolocationDelegate extends com.marianhello.bgloc.PluginDelegate
   private bgGeo : any;
   private callbacks : Array<any>;
 
+  // a reference to the BackgroundGeolocationFbs instance because we need access to some of its
+  // methods, notably convertLocation()
+  //
+  // FIXME: This doesn't feel quite right.
+
+  private bgFbs : BackgroundGeolocationFbs;
+
   // ------------------------------------------------------------
 
   /**
@@ -39,9 +46,11 @@ class BackgroundGeolocationDelegate extends com.marianhello.bgloc.PluginDelegate
   * @link https://discourse.nativescript.org/t/marshalling-help/5537
   */
 
-  constructor() {                                                                                                                   
+  constructor( bgFbsInstance : BackgroundGeolocationFbs ) { 
 
     super();
+
+    this.bgFbs = bgFbsInstance;
 
     console.log( "BackgroundGeolocationDelegate::constructor():" );
 
@@ -120,7 +129,7 @@ class BackgroundGeolocationDelegate extends com.marianhello.bgloc.PluginDelegate
 
       console.log( "BackgroundGeolocationDelegate::onLocationChanged(): top." );
 
-      let location : Location = this.convertLocation( bgLocation.toJSONObjectWithId() );
+      let location : Location = this.bgFbs.convertLocation( bgLocation.toJSONObjectWithId() );
 
       console.log( "BackgroundGeolocationDelege::onLocationChanged(): after bgLocation converted to location" );
 
@@ -148,7 +157,7 @@ class BackgroundGeolocationDelegate extends com.marianhello.bgloc.PluginDelegate
 
       // FIXME: sometimes it seems there is no id.
 
-      let location : Location = this.convertLocation( bgLocation.toJSONObjectWithId() );
+      let location : Location = this.bgFbs.convertLocation( bgLocation.toJSONObjectWithId() );
 
       console.log( "BackgroundGeolocationDelege::onStationaryChanged(): location with id:", location.id );
 
@@ -244,149 +253,6 @@ class BackgroundGeolocationDelegate extends com.marianhello.bgloc.PluginDelegate
 
   }
 
-  // ---------------------------------------------------------
-
-  /**
-  * Convert JSONObject location to js json.
-  *
-  * Background location objects are returned as java JSON objects
-  * from https://stleary.github.io/JSON-java/org/json/JSONObject.html
-  *
-  * The properties of these cannot, apparently, be directly accessed. So this
-  * method is here to convert a background location object into a form
-  * that's easier to use from typescript/javascript. 
-  *
-  * I could have chosen to simple create a JSON string and then parse that
-  * but the unnecessary overhead would hurt my soul.
-  *
-  * @link https://stleary.github.io/JSON-java/org/json/JSONObject.html
-  */
-
-  convertLocation( bgLocation ) {
-
-    // FIXME: My suspicion is that there's something in this method, possibly this console.log call that's
-    // causing console.log() crashes later on.
-    //
-    // console.log( "BackgroundGeolocationDelegate::convertLocation(): got background location:", bgLocation );
-
-    console.log( "BackgroundGeolocationDelegate::convertLocation(): top." );
-
-    let location : Location = new Location();
-
-    // FIXME: console.log( "...", location) will crash after about 12,000 locations or so
-    // even if we return the following hard coded object each time leading me to believe
-    // the NativeScript console.log crash is not related directly to JSONobject.
-
-/*
-    location.id = 1;
-
-    location.provider = 'test';
-
-    location.locationProvider = 0;
-
-    location.time = 12345;
-    
-    location.latitude = 35.5;
-
-    location.longitude = 23.3;
-
-    location.accuracy = 50.1;
-
-    location.speed = 50;
-
-    location.altitude = 65.2;
-
-    location.bearing = 12.2;
-
-    location.isFromMockProvider = true;
-
-    location.mockLocationsEnabled = true;
-*/
-
-    // sadly it seems that if we attempt to get a value that is not present it 
-    // throws an exception and that seem to be a number of circumstances where not
-    // all values are present. As a result, these handstands are needed.
-
-    if ( bgLocation.isNull( 'id' ) ) {
-      location.id = null;
-    } else {
-      location.id = bgLocation.getLong( 'id' );
-    }
-
-    if ( bgLocation.isNull( 'provider' ) ) {
-      location.provider = '';
-    } else {
-      location.provider = bgLocation.getString( 'provider' );
-    }
-
-    if ( bgLocation.isNull( 'locationProvider' ) ) {
-      location.locationProvider = null;
-    } else {
-      location.locationProvider = bgLocation.getInt( 'locationProvider' );
-    }
-
-    if ( bgLocation.isNull( 'time' ) ) {
-      location.time = null;
-    } else {
-      location.time = bgLocation.getLong( 'time' );
-    }
-
-    if ( bgLocation.isNull( 'latitude' ) ) {
-      location.latitude = null;
-    } else {
-      location.latitude = bgLocation.getDouble( 'latitude' );
-    }
-
-    if ( bgLocation.isNull( 'longitude' ) ) {
-      location.longitude = null;
-    } else {
-      location.longitude = bgLocation.getDouble( 'longitude' );
-    }
-
-    if ( bgLocation.isNull( 'accuracy' ) ) {
-      location.accuracy = null;
-    } else {
-      location.accuracy = bgLocation.getDouble( 'accuracy' );
-    }
-
-    // this seems to happen with the lockito fake gps app.
-
-    if ( bgLocation.isNull( 'speed' ) ) {
-      location.speed = null;
-    } else {
-      location.speed = bgLocation.getDouble( 'speed' );
-    }
-
-    if ( bgLocation.isNull( 'altitude' ) ) {
-      location.altitude = null;
-    } else {
-      location.altitude = bgLocation.getDouble( 'altitude' );
-    }
-
-    if ( bgLocation.isNull( 'bearing' ) ) {
-      location.bearing = null;
-    } else {
-      location.bearing = bgLocation.getDouble( 'bearing' );
-    }
-
-    if ( bgLocation.isNull( 'isFromMockProvider' ) ) {
-      location.isFromMockProvider = null;
-    } else {
-      location.isFromMockProvider = bgLocation.getBoolean( 'isFromMockProvider' );
-    }
-
-    if ( bgLocation.isNull( 'mockLocationsEnabled' ) ) {
-      location.mockLocationsEnabled = null;
-    } else {
-      location.mockLocationsEnabled = bgLocation.getBoolean( 'mockLocationsEnabled' );
-    }
-
-    console.log( "BackgroundGeolocationDelegate::convertLocation(): bottom" );
-
-    return location;
-
-  } // end of convertLocation.
-
 } // end of class BackgroundGeolocationDelegate
 
 // ----------------------------------------------------------------------------------------------------------------------
@@ -411,7 +277,7 @@ export class BackgroundGeolocationFbs extends Common {
 
     super();
 
-    this.bgDelegate = new BackgroundGeolocationDelegate();
+    this.bgDelegate = new BackgroundGeolocationDelegate( this );
 
     this.bgGeo = new com.marianhello.bgloc.BackgroundGeolocationFacade( app.android.context, this.bgDelegate );
 
@@ -751,13 +617,34 @@ export class BackgroundGeolocationFbs extends Common {
 
   getLocations() {
 
-    let locations : any = {};
+    let locationsCollection : any = {};
+    let rawLocations : any;
+    let locations : any = [];
 
     return new Promise( ( resolve, reject ) => {
 
       try {
 
-        locations = this.bgGeo.getLocations();
+        // this returns a java.util.Collection
+
+        locationsCollection = this.bgGeo.getLocations();
+
+        // this returns a java array. Apparently .foreach() cannot be used with this array.
+
+        rawLocations = locationsCollection.toArray();
+
+        console.log( "BackgroundGeolocationFbs::getLocations(): toArray() length is:", rawLocations.length );
+
+        for ( let i = 0; i < rawLocations.length; i++ ) {
+
+          // individual location objects are of type BackgroundLocation which we convert to a org.json.JSONObject 
+          // which is then converted to simple Javascript/Typescript object. 
+          //
+          // FIXME: check to see if we can bypass converting to a JSONObject here. 
+
+          locations.push( this.convertLocation( rawLocations[ i ].toJSONObjectWithId() ) );
+
+        }
 
         resolve( locations );
 
@@ -957,14 +844,16 @@ export class BackgroundGeolocationFbs extends Common {
 
         this.stop().then( () => {
 
-setTimeout( () => {
+          // FIXME: This is a hack to work around an Android 9 issue where the app does not
+          // die completely. 
 
-          console.log( "BackgroundGeolocationFbs::destory(): after timeout calling destroy" );
+          setTimeout( () => {
 
-          this.bgGeo.destroy();
-          resolve( true );
-}, 1500 );
+            console.log( "BackgroundGeolocationFbs::destory(): after timeout calling destroy" );
 
+            this.bgGeo.destroy();
+            resolve( true );
+          }, 1500 );
 
         });
 
@@ -982,31 +871,52 @@ setTimeout( () => {
   * @param {number} limit - number of most recent log entries to retrieve.
   *
   * @return
+  *
+  * @link https://stackoverflow.com/questions/3293946/the-easiest-way-to-transform-collection-to-array
   */
 
   getLogEntries( limit : number ) : Promise<any> {
 
+    let rawLogEntries : any = [];
     let logEntries : any = [];
+
+    let logEntry : any;
 
     return new Promise( ( resolve, reject ) => {
 
       try {
 
-        let rawLogEntries : any = this.bgGeo.getLogEntries( new java.lang.Integer( limit ) );
+        // note that getLogEntries() returns a java.util.Collection, not an array.
 
-        console.log( "BackgroundGeolocationFbs::getLogEntries(): got entries:", logEntries );
+        console.log( "BackgroundGeolocationFbs::getLogEntries(): attempting to get '" + limit + "' entries." );
 
-        rawLogEntries.forEach( ( entry ) => {
-          logEntries.push( {
-            id: entry.id,
-            context: entry.context,
-            level: entry.level,
-            message: entry.message,
-            timestamp: entry.timestamp,
-            loggerName: entry.loggerName,
-            stackTrace : entry.getStackTrack()
-          })
-        });
+        let rawLogEntriesCollection : any = this.bgGeo.getLogEntries( new java.lang.Integer( limit ) );
+
+        // this returns a java array. Apparently .foreach() cannot be used with this array.
+
+        rawLogEntries = rawLogEntriesCollection.toArray();
+
+        console.log( "BackgroundGeolocationFbs::getLogEntries(): rawLogEntries toArray() length is:", rawLogEntries.length );
+
+        for ( let i = 0; i < rawLogEntries.length; i++ ) {
+
+          // this is a com.marianhello.logging.LogEntry object. 
+
+          let entry = rawLogEntries[i];
+
+          logEntry = {
+            id: entry.getId(),
+            context: entry.getContext(),
+            level: entry.getLevel(),
+            message: entry.getMessage(),
+            timestamp: entry.getTimestamp(),
+            loggerName: entry.getLoggerName(),
+            stackTrace : entry.getStackTrace()
+          };
+
+          logEntries.push( logEntry );
+
+        }
 
         resolve( logEntries );
 
@@ -1015,5 +925,148 @@ setTimeout( () => {
       }
     });
   }
+
+  // ---------------------------------------------------------
+
+  /**
+  * Convert JSONObject location to js json.
+  *
+  * Background location objects are returned as java JSON objects
+  * from https://stleary.github.io/JSON-java/org/json/JSONObject.html
+  *
+  * The properties of these cannot, apparently, be directly accessed. So this
+  * method is here to convert a background location object into a form
+  * that's easier to use from typescript/javascript. 
+  *
+  * I could have chosen to simple create a JSON string and then parse that
+  * but the unnecessary overhead would hurt my soul.
+  *
+  * @link https://stleary.github.io/JSON-java/org/json/JSONObject.html
+  */
+
+  convertLocation( bgLocation ) {
+
+    // FIXME: My suspicion is that there's something in this method, possibly this console.log call that's
+    // causing console.log() crashes later on.
+    //
+    // console.log( "BackgroundGeolocationDelegate::convertLocation(): got background location:", bgLocation );
+
+    console.log( "BackgroundGeolocationDelegate::convertLocation(): top." );
+
+    let location : Location = new Location();
+
+    // FIXME: console.log( "...", location) will crash after about 12,000 locations or so
+    // even if we return the following hard coded object each time leading me to believe
+    // the NativeScript console.log crash is not related directly to JSONobject.
+
+/*
+    location.id = 1;
+
+    location.provider = 'test';
+
+    location.locationProvider = 0;
+
+    location.time = 12345;
+    
+    location.latitude = 35.5;
+
+    location.longitude = 23.3;
+
+    location.accuracy = 50.1;
+
+    location.speed = 50;
+
+    location.altitude = 65.2;
+
+    location.bearing = 12.2;
+
+    location.isFromMockProvider = true;
+
+    location.mockLocationsEnabled = true;
+*/
+
+    // sadly it seems that if we attempt to get a value that is not present it 
+    // throws an exception and that seem to be a number of circumstances where not
+    // all values are present. As a result, these handstands are needed.
+
+    if ( bgLocation.isNull( 'id' ) ) {
+      location.id = null;
+    } else {
+      location.id = bgLocation.getLong( 'id' );
+    }
+
+    if ( bgLocation.isNull( 'provider' ) ) {
+      location.provider = '';
+    } else {
+      location.provider = bgLocation.getString( 'provider' );
+    }
+
+    if ( bgLocation.isNull( 'locationProvider' ) ) {
+      location.locationProvider = null;
+    } else {
+      location.locationProvider = bgLocation.getInt( 'locationProvider' );
+    }
+
+    if ( bgLocation.isNull( 'time' ) ) {
+      location.time = null;
+    } else {
+      location.time = bgLocation.getLong( 'time' );
+    }
+
+    if ( bgLocation.isNull( 'latitude' ) ) {
+      location.latitude = null;
+    } else {
+      location.latitude = bgLocation.getDouble( 'latitude' );
+    }
+
+    if ( bgLocation.isNull( 'longitude' ) ) {
+      location.longitude = null;
+    } else {
+      location.longitude = bgLocation.getDouble( 'longitude' );
+    }
+
+    if ( bgLocation.isNull( 'accuracy' ) ) {
+      location.accuracy = null;
+    } else {
+      location.accuracy = bgLocation.getDouble( 'accuracy' );
+    }
+
+    // this seems to happen with the lockito fake gps app.
+
+    if ( bgLocation.isNull( 'speed' ) ) {
+      location.speed = null;
+    } else {
+      location.speed = bgLocation.getDouble( 'speed' );
+    }
+
+    if ( bgLocation.isNull( 'altitude' ) ) {
+      location.altitude = null;
+    } else {
+      location.altitude = bgLocation.getDouble( 'altitude' );
+    }
+
+    if ( bgLocation.isNull( 'bearing' ) ) {
+      location.bearing = null;
+    } else {
+      location.bearing = bgLocation.getDouble( 'bearing' );
+    }
+
+    if ( bgLocation.isNull( 'isFromMockProvider' ) ) {
+      location.isFromMockProvider = null;
+    } else {
+      location.isFromMockProvider = bgLocation.getBoolean( 'isFromMockProvider' );
+    }
+
+    if ( bgLocation.isNull( 'mockLocationsEnabled' ) ) {
+      location.mockLocationsEnabled = null;
+    } else {
+      location.mockLocationsEnabled = bgLocation.getBoolean( 'mockLocationsEnabled' );
+    }
+
+    console.log( "BackgroundGeolocationDelegate::convertLocation(): bottom" );
+
+    return location;
+
+  } // end of convertLocation.
 
 } // END

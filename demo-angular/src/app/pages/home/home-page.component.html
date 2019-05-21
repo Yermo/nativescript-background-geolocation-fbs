@@ -1,8 +1,9 @@
 <DockLayout stretchLastChild="true" backgroundColor="#282E4B">
   <StackLayout orientation="vertical" dock="top">
-    <GridLayout columns="auto,auto" rows="auto">
+    <GridLayout columns="auto,auto,auto" rows="auto">
       <Button row="0" col="0" text="Start" (tap)="start()" class="btn btn-primary"></Button>
       <Button row="0" col="1" text="Stop" (tap)="stop()" class="btn button-info"></Button>
+      <Button row="0" col="2" text="Debug Log" (tap)="debuglog()" class="btn button-info"></Button>
     </GridLayout>
 
     <GridLayout columns="*, *" rows="auto, auto" class="m-y-30 m-x-20">

@@ -13,6 +13,8 @@ import {
   ChangeDetectorRef
 } from "@angular/core";
 
+import { RouterExtensions } from "nativescript-angular/router";
+
 import { Location } from "nativescript-background-geolocation-fbs";
 import { LocationsService } from "../../services/locations.service";
 
@@ -54,6 +56,7 @@ export class HomePageComponent implements OnInit {
   public runtime$ = interval(1000).pipe( map( val => { return this.formatInterval( Date.now() - this.startTime ); } ));
 
   constructor(
+    private routerExtensions: RouterExtensions,
     private locationsService: LocationsService
   ) {
   }
@@ -112,6 +115,16 @@ export class HomePageComponent implements OnInit {
   // ---------------------------------------------------------
 
   /**
+  * navigate to the debuglog page
+  */
+
+  debuglog() {
+    this.routerExtensions.navigate( ["/debuglog" ] );
+  }
+
+  // ---------------------------------------------------------
+
+  /**
   * on init
   *
   * @see LocationsService
@@ -119,9 +132,7 @@ export class HomePageComponent implements OnInit {
   */
 
   ngOnInit(): void {
-
     this.locations$ = this.locationsService.getLocationsObservable();
-
   }
 
   // ------------------------------------------------------------

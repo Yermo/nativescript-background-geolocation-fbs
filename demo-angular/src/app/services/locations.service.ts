@@ -239,4 +239,14 @@ export class LocationsService {
     return this.locationsSubject.asObservable();
   }
 
+  // ----------------------------------------------------
+
+  /**
+  * return debug log entries
+  */
+
+  getLogEntries( limit : number ) {
+    return this.bgGeo.getLogEntries( limit );
+  }
+
 } // END

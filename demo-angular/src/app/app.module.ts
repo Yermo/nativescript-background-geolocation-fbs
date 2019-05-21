@@ -5,6 +5,7 @@ import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 
 import { HomePageComponent } from "./pages/home/home-page.component";
+import { DebugLogPageComponent } from "./pages/debuglog/debug-log-page.component";
 
 import { LocationsListComponent } from "./components/locations-list/locations-list.component";
 
@@ -19,14 +20,17 @@ import { LocationsListComponent } from "./components/locations-list/locations-li
     declarations: [
         AppComponent,
         HomePageComponent,
-        LocationsListComponent
+        LocationsListComponent,
+        DebugLogPageComponent
     ],
     providers: [],
     schemas: [
         NO_ERRORS_SCHEMA
     ]
 })
+
 /*
 Pass your application module to the bootstrapModule function located in main.ts to start your app
 */
+
 export class AppModule { }
