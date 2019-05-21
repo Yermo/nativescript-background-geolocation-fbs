@@ -1,7 +1,7 @@
 {
 	"name": "nativescript-background-geolocation-fbs",
 	"version": "1.0.0",
-	"description": "Your awesome NativeScript plugin.",
+	"description": "Background geolocation for NativeScript.",
 	"main": "background-geolocation-fbs",
 	"typings": "index.d.ts",
 	"nativescript": {
@@ -33,11 +33,12 @@
 		"NativeScript",
 		"JavaScript",
 		"Android",
-		"iOS"
+		"iOS",
+		"geolocation"
 	],
 	"author": {
-		"name": "Your Name",
-		"email": "youremail@yourdomain.com"
+		"name": "Yermo Lamers, Flying Brick Software, LLC",
+		"email": "yml@yml.com"
 	},
 	"bugs": {
 		"url": "https://github.com/Yermo/nativescript-background-geolocation-fbs/issues"

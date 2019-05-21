@@ -46,7 +46,7 @@ export class LocationsService {
     this.started = false;
     this.foreground = true;
 
-    // updates for this segment are pushed onto this subject
+    // location updates are pushed onto this subject as they come in.
 
     this.locationsSubject = new Subject();
 
@@ -85,6 +85,7 @@ export class LocationsService {
   *
   * see start()
   *
+  * @see https://github.com/Yermo/nativescript-background-geolocation-fbs#api
   * @link https://stackoverflow.com/questions/25132509/java-lang-runtimeexception-could-not-read-input-channel-file-descriptors-from-p
   */
 
@@ -106,7 +107,7 @@ export class LocationsService {
       this.bgGeo.configure({
         locationProvider: BackgroundGeolocationFbs.DISTANCE_FILTER_PROVIDER,
         desiredAccuracy: BackgroundGeolocationFbs.HIGH_ACCURACY,
-//      stationaryRadius: 50.0,
+        stationaryRadius: 25.0,
         distanceFilter: 1,
         notificationTitle: 'Background tracking',
         notificationText: 'enabled',
@@ -131,7 +132,7 @@ export class LocationsService {
         startForeground: false
       }).then( () => {
 
-        // FIXME: attempting to force gc() crash
+        // FIXME: attempting to force gc() crash under Android. This may be fixed by the NativeScript 5.4 update.
 
         setTimeout( () => { gc(); }, 1000);
  
@@ -175,7 +176,8 @@ export class LocationsService {
 
     console.log( "LocationsService:onLocation(): before next" );
 
-    // we only propagate the change if we are in the foreground
+    // for purposes of this demo app, since we don't want the UI to update when 
+    // we are in the background, we'll only forward updates when we are in the foreground.
 
     if ( this.foreground ) {
       this.locationsSubject.next( location );

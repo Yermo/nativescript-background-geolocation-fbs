@@ -1,6 +1,6 @@
 {
   "nativescript": {
-    "id": "org.nativescript.demoangular",
+    "id": "com.flyingbricksoftware.bgldemoangular",
     "tns-android": {
       "version": "5.4.0"
     },
@@ -8,8 +8,8 @@
       "version": "5.4.0"
     }
   },
-  "description": "NativeScript Application",
-  "license": "SEE LICENSE IN <your-license-filename>",
+  "description": "Angular Demo of Background Geolocation Plugin for NativeScript",
+  "license": "SEE LICENSE IN LICENSE.md",
   "repository": "<fill-your-repository-here>",
   "dependencies": {
     "@angular/animations": "~7.2.0",
