@@ -61,6 +61,17 @@ export class HomePageComponent implements OnInit {
   ) {
   }
 
+  // ---------------------------------------------------------
+
+  /**
+  * navigate to the settings page
+  */
+
+  settings() {
+    this.routerExtensions.navigate( ["/settings" ] );
+  }
+
+
   // --------------------------------------------------------
 
   /**
@@ -69,9 +80,28 @@ export class HomePageComponent implements OnInit {
   * @see locations.component.html
   */
 
-  start( args: EventData ) {
+  async start( args: EventData ) {
 
     console.log( "HomePageComponent::start() - starting to track locations" );
+
+    // if the geolocation service is not configured, configure it with the currently
+    // stored (or if this is the first run, default) settings.
+
+    if ( ! this.locationsService.isConfigured ) {
+
+      await this.locationsService.configure().catch( ( error ) => {
+
+        dialogs.alert({
+          title: "Location Service",
+          message: error.toString(),
+          okButtonText: "OK",
+        });
+
+        return false;
+
+      });
+
+    }
 
     try {
       this.locationsService.start();
@@ -79,7 +109,7 @@ export class HomePageComponent implements OnInit {
 
       dialogs.alert({
         title: "Location Service",
-        message: error.msg,
+        message: error.toString(),
         okButtonText: "OK",
       });
 
@@ -104,7 +134,71 @@ export class HomePageComponent implements OnInit {
 
       dialogs.alert({
         title: "Location Service",
-        message: error.msg,
+        message: error.toString(),
+        okButtonText: "OK",
+      });
+
+    }
+
+  }
+
+  // ---------------------------------------------------------
+
+  /**
+  * pause locations service
+  */
+
+  pause( args: EventData ) {
+
+    console.log( "HomePageComponent::pause() - pausing tracking" );
+
+    try {
+
+      this.locationsService.pause();
+
+      dialogs.alert({
+        title: "Location Service",
+        message: "Location updates paused.",
+        okButtonText: "OK",
+      });
+
+    } catch( error ) {
+
+      dialogs.alert({
+        title: "Location Service",
+        message: error.toString(),
+        okButtonText: "OK",
+      });
+
+    }
+
+  }
+
+  // ---------------------------------------------------------
+
+  /**
+  * resume locations service
+  */
+
+  resume( args: EventData ) {
+
+    console.log( "HomePageComponent::resume() - resuming tracking" );
+
+    try {
+
+      this.locationsService.resume();
+
+      dialogs.alert({
+        title: "Location Service",
+        message: "Location updates resumed.",
+        okButtonText: "OK",
+      });
+
+    } catch( error ) {
+
+      dialogs.alert({
+        title: "Location Service",
+        message: error.toString(),
         okButtonText: "OK",
       });
 
@@ -120,6 +214,122 @@ export class HomePageComponent implements OnInit {
 
   debuglog() {
     this.routerExtensions.navigate( ["/debuglog" ] );
+  }
+
+  // ---------------------------------------------------------
+
+  /**
+  * navigate to the locations page
+  */
+
+  locations() {
+    this.routerExtensions.navigate( ["/locations" ] );
+  }
+
+  // ---------------------------------------------------------
+
+  /**
+  * Current Location
+  */
+
+  currentLocation() {
+
+    console.log( "HomePageComponent::currentLocation():" );
+
+    this.locationsService.getCurrentLocation().then( ( location ) => {
+
+      dialogs.alert({
+        title: "Current Location",
+        message: "Lat: " + location.latitude + " Lng: " + location.longitude + " Elev: " + location.altitude,
+        okButtonText: "OK",
+       });
+    }).catch( ( error ) => {
+
+      dialogs.alert({
+        title: "Location Error",
+        message: error.toString(),
+        okButtonText: "OK",
+      });
+
+    });
+
+  }
+
+  // ---------------------------------------------------------
+
+  /**
+  * clear locations cache.
+  */
+
+  clearLocations() {
+
+    console.log( "HomePageComponent::clearLocations():" );
+
+    this.locationsService.clearLocations();
+
+    dialogs.alert({
+      title: "Background Locations",
+      message: "Locations cache cleared",
+      okButtonText: "OK",
+     });
+
+  }
+
+  // ---------------------------------------------------------
+
+  /**
+  * show app settings
+  */
+
+  appSettings() {
+    this.locationsService.settings();
+  }
+
+  // ---------------------------------------------------------
+
+  /**
+  * show location settings
+  */
+
+  locationSettings() {
+    this.locationsService.locationSettings();
+  }
+
+  // ---------------------------------------------------------
+
+  /**
+  * Check status
+  */
+
+  status() {
+
+    console.log( "HomePageComponent::clearLocations():" );
+
+    this.locationsService.checkStatus().then( ( status ) => {
+
+      let msg = 'isRunning: ' +  status.isRunning + "\n";
+
+      msg += 'hasPermissions: ' + status.hasPermissions + "\n";
+
+      msg += 'locationServicesEnabled: ' + status.locationServicesEnabled + "\n";
+      msg += 'authorizaton: ' + status.authorization + "\n";
+
+      dialogs.alert({
+        title: "BGgeo Status",
+        message: msg,
+        okButtonText: "OK",
+       });
+
+     }).catch( ( error ) => {
+  
+      dialogs.alert({
+        title: "BGgeo Status Error",
+        message: error.toString(),
+        okButtonText: "OK",
+       });
+
+     });
+
   }
 
   // ---------------------------------------------------------

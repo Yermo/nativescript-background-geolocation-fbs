@@ -10,30 +10,31 @@
 
   <StackLayout class="list-group">
     <GridLayout class="list-group-item" rows="auto,auto" columns="*,*,*">
-      <Label row="0" col="0" text="ID" textAlignment="center" class="font-weight-bold" ></Label>
-      <Label row="0" col="1" text="Context" textAlignment="center" class="font-weight-bold m-l-20"></Label>
-      <Label row="0" col="2" text="Level" textAlignment="center" class="font-weight-bold"></Label>
+      <Label row="0" col="0" [text]="idSortOrder != 'none' ? idSortOrder == 'asc' ? 'ID &#xf106;' : 'ID &#xf107;' : 'ID'" class="fa" (tap)="toggleSortById()" ios:margin="5"></Label>
+      <Label row="0" col="1" text="Date" textAlignment="center" class="font-weight-bold"></Label>
+      <Label row="0" col="2" [text]="levelSortOrder != 'none' ? levelSortOrder == 'asc' ? 'Level &#xf106;' : 'Level &#xf107;' : 'Level'" class="fa" (tap)="toggleSortByLevel()" ios:margin="5" textAlignment="right"></Label>
       <Label row="1" col="0" colSpan="3" text="Message" textAlignment="center" class="font-weight-bold"></Label>
     </GridLayout>
   </StackLayout>
   
-  <ListView [items]="messages" class="list-group" *ngIf="messages.length>1" height="100%">
-    <ng-template let-entry="item" let-i="index" let-odd="odd" let-even="even">
+  <RadListView [items]="messages" class="list-group" height="100%" #listView [sortingFunction]="sortingFunc" loadOnDemandMode="Auto" (loadMoreDataRequested)="onLoadMoreItemsRequested($event)">
+    <ng-template tkListItemTemplate let-entry="item" let-i="index" let-odd="odd" let-even="even">
 
       <!-- The item template can only have a single root view container (e.g. GridLayout, StackLayout, etc.)-->
 
       <StackLayout>
 
-        <GridLayout class="list-group-item" rows="auto,auto" columns="*,*,*">
-          <Label row="0" col="0" text="{{entry.id}}"></Label>
-          <Label row="0" col="1" text="{{entry.context}}" textWrap="true" class="m-l-20"></Label>
-          <Label row="0" col="2" text="{{entry.level}}" textWrap="true" class="m-l-20"></Label>
-          <Label row="1" col="0" colSpan="3" text="{{entry.message}}" textWrap="true" class="m-l-20"></Label>
+        <GridLayout class="list-group-item" rows="auto,auto,auto" columns="*,*,*">
+          <Label row="0" col="0" text="{{entry.id}}" textAlignment="left"></Label>
+          <Label row="0" col="1" text="{{entry.timestamp | date: 'short'}}" textAlignment="left" class="m-t-5"></Label>
+          <Label row="0" col="2" text="{{entry.level}}" textWrap="true" textAlignment="right" class="m-l-5"></Label>
+          <Label row="1" col="0" colSpan="3" text="{{entry.message}}" textWrap="true" class="m-t-5" style="border-bottom: 1px #CCCCCC"></Label>
+          <StackLayout row="2" col="0" colSpan="3" class="hr-light m-10"></StackLayout>
         </GridLayout>
 
       </StackLayout>
 
     </ng-template>
-  </ListView>
+  </RadListView>
 
 </StackLayout>

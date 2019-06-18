@@ -6,8 +6,12 @@ import { AppComponent } from "./app.component";
 
 import { HomePageComponent } from "./pages/home/home-page.component";
 import { DebugLogPageComponent } from "./pages/debuglog/debug-log-page.component";
+import { LocationsPageComponent } from "./pages/locations/locations-page.component";
+import { SettingsPageComponent } from "./pages/settings/settings-page.component";
 
 import { LocationsListComponent } from "./components/locations-list/locations-list.component";
+
+import { NativeScriptUIListViewModule } from "nativescript-ui-listview/angular";
 
 @NgModule({
     bootstrap: [
@@ -15,13 +19,16 @@ import { LocationsListComponent } from "./components/locations-list/locations-li
     ],
     imports: [
         NativeScriptModule,
-        AppRoutingModule
+        AppRoutingModule,
+        NativeScriptUIListViewModule 
     ],
     declarations: [
         AppComponent,
         HomePageComponent,
         LocationsListComponent,
-        DebugLogPageComponent
+        DebugLogPageComponent,
+        LocationsPageComponent,
+        SettingsPageComponent
     ],
     providers: [],
     schemas: [

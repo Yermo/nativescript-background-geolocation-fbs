@@ -129,7 +129,7 @@ class BackgroundGeolocationDelegate extends com.marianhello.bgloc.PluginDelegate
 
       console.log( "BackgroundGeolocationDelegate::onLocationChanged(): top." );
 
-      let location : Location = this.bgFbs.convertLocation( bgLocation.toJSONObjectWithId() );
+      let location : Location = this.bgFbs.convertLocation( bgLocation );
 
       console.log( "BackgroundGeolocationDelege::onLocationChanged(): after bgLocation converted to location" );
 
@@ -157,7 +157,7 @@ class BackgroundGeolocationDelegate extends com.marianhello.bgloc.PluginDelegate
 
       // FIXME: sometimes it seems there is no id.
 
-      let location : Location = this.bgFbs.convertLocation( bgLocation.toJSONObjectWithId() );
+      let location : Location = this.bgFbs.convertLocation( bgLocation );
 
       console.log( "BackgroundGeolocationDelege::onStationaryChanged(): location with id:", location.id );
 
@@ -260,6 +260,8 @@ class BackgroundGeolocationDelegate extends com.marianhello.bgloc.PluginDelegate
 
 /**
 * Main Entry Point for Background Geolocation
+*
+* @todo check use of lang.java.Integer() and lang.java.Float(). Sometimes methods are erroring out if types are not explicityly converted to java objects and other times errors are generated if explicity conversions are done.
 */
 
 export class BackgroundGeolocationFbs extends Common {
@@ -319,89 +321,97 @@ export class BackgroundGeolocationFbs extends Common {
 
         console.log( "BackgroundGeolocationFbs::configure(): setting:", config );
 
-        if ( config.locationProvider ) {
+        if ( typeof config.locationProvider != 'undefined' ) {
           configInstance.setLocationProvider( new java.lang.Integer( config.locationProvider ) );
         }
 
-        if ( config.desiredAccuracy ) {
+        if ( typeof config.desiredAccuracy != 'undefined' ) {
           configInstance.setDesiredAccuracy( new java.lang.Integer( config.desiredAccuracy ) );
         }
 
-        if ( config.stationaryRadius ) {
-          configInstance.setStationaryRadius( new java.lang.Float( config.stationaryRadius ) );
+        if ( typeof config.stationaryRadius != 'undefined' ) {
+
+          // FIXME: If I use a "new java.lang.Float( config.stationaryRadius )" here 
+          // it passes a nonsense number to the java method. However, passing the raw 
+          // javascript number here seems to work.
+
+          configInstance.setStationaryRadius( config.stationaryRadius );
         }
 
-        if ( config.debug ) {
+        if ( typeof config.debug != 'undefined' ) {
+
+          console.log( "BackgroundGeolocationFbs::configure(): setting config.debug to:", config.debug );
+
           configInstance.setDebugging( new java.lang.Boolean( config.debug ) );
         } else {
           configInstance.setDebugging( new java.lang.Boolean( false ) );
         }
 
-        if ( config.distanceFilter ) {
+        if ( typeof config.distanceFilter != 'undefined' ) {
           configInstance.setDistanceFilter( new java.lang.Integer( config.distanceFilter ) );
         }
 
-        if ( config.stopOnTerminate ) {
+        if ( typeof config.stopOnTerminate != 'undefined' ) {
           configInstance.setStopOnTerminate( new java.lang.Boolean( config.stopOnTerminate ) );
         }
 
-        if ( config.startOnBoot ) {
+        if ( typeof config.startOnBoot != 'undefined' ) {
           configInstance.setStartOnBoot( new java.lang.Boolean( config.startOnBoot ) );
         }
 
-        if ( config.interval ) {
+        if ( typeof config.interval != 'undefined' ) {
           configInstance.setInterval( new java.lang.Integer( config.interval ) );
         }
 
-        if ( config.fastestInterval ) {
+        if ( typeof config.fastestInterval != 'undefined' ) {
           configInstance.setFastestInterval( new java.lang.Integer( config.fastestInterval ) );
         }
 
-        if ( config.activitiesInterval ) {
+        if ( typeof config.activitiesInterval != 'undefined' ) {
           configInstance.setActivitiesInterval( new java.lang.Integer( config.activitiesInterval ) );
         }
 
-        if ( config.stopOnStillActivity ) {
+        if ( typeof config.stopOnStillActivity != 'undefined' ) {
           configInstance.setStopOnStillActivity( new java.lang.Boolean( config.stopOnStillActivity ) );
         }
 
-        if ( config.notificationsEnabled ) {
+        if ( typeof config.notificationsEnabled != 'undefined' ) {
           configInstance.setNotificationsEnabled( new java.lang.Boolean( config.notificationsEnabled ));
         }
 
-        if ( config.setStartForeground ) {
+        if ( typeof config.setStartForeground != 'undefined' ) {
           configInstance.setStartForeground( new java.lang.Boolean( config.setStartForeground ) );
         }
 
-        if ( config.setNotificationTitle ) {
+        if ( typeof config.setNotificationTitle != 'undefined' ) {
           configInstance.setNotificationTitle( config.setNotificationTitle );
         }
 
-        if ( config.notificationText ) {
+        if ( typeof config.notificationText != 'undefined' ) {
           configInstance.setNotificationText( config.notificationText );
         }
 
-        if ( config.notificationIconColor ) {
+        if ( typeof config.notificationIconColor != 'undefined' ) {
           configInstance.setNotificationIconColor( config.notificationIconColor );
         }
 
-        if  ( config.notificationIconLarge ) {
+        if  ( typeof config.notificationIconLarge != 'undefined' ) {
           configInstance.setLargeNotificationIcon( config.notificationIconLarge );
         }
 
-        if ( config.notificationIconSmall ) {
+        if ( typeof config.notificationIconSmall != 'undefined' ) {
           configInstance.setSmallNotificationIcon( config.notificationIconSmall );
         }
 
-        if ( config.url ) {
+        if ( typeof config.url != 'undefined' ) {
           configInstance.setUrl( config.url );
         }
 
-        if ( config.syncUrl ) {
+        if ( typeof config.syncUrl != 'undefined' ) {
           configInstance.setSyncUrl( config.syncUrl );
         }
 
-        if ( config.syncThreshold ) {
+        if ( typeof config.syncThreshold != 'undefined' ) {
           configInstance.setSyncThreshold( new java.lang.Integer(  config.syncThreshold ) );
         }
 
@@ -409,19 +419,19 @@ export class BackgroundGeolocationFbs extends Common {
         * @todo FIXME: needs marshalling
         */
 
-        if ( config.httpHeaders ) {
+        if ( typeof config.httpHeaders != 'undefined' ) {
           configInstance.setHttpHeaders( config.httpHeaders );
         }
 
-        if ( config.maxLocations ) {
-          configInstance.setMaxLocations( config.maxLocations );
+        if ( typeof config.maxLocations != 'undefined' ) {
+          configInstance.setMaxLocations( new java.lang.Integer( config.maxLocations ) );
         }
 
         /**
         * @todo FIXME: needs marshalling
         */
 
-        if ( config.postTemplate ) {
+        if ( typeof config.postTemplate != 'undefined' ) {
           configInstance.setTemplate( config.postTemplate );
         }
 
@@ -444,20 +454,80 @@ export class BackgroundGeolocationFbs extends Common {
   /**
   * return current configuration
   *
+  * Returns the current configuration as a plain javascript object.
+  *
   * @return {Promise<any>}
+  *
+  * @link https://docs.nativescript.org/core-concepts/android-runtime/marshalling/java-to-js
   */
 
   getConfig() {
 
     return new Promise( ( resolve, reject ) => {
 
+      let config : any = {};
+
       try {
 
-        console.log( "BackgroundGeolocationFbs::getConfig(): before getting config" );
+        let nativeConfig = this.bgGeo.getConfig();
 
-        let config = this.bgGeo.getConfig();
+        // I had been under the impression that the Android Runtime would automatically
+        // convert values from java to javascript, however that does not seem to work
+        // under all circumstances. 
+        //
+        // As of NativeScript 5.4, a symptom that indicates marshalling hasn't fully worked
+        // is that if you try to console.log() an object, properties get displayed as 
+        // empty objects where they should be primitive types. For example, if config.debug 
+        // is set to nativeConfig.isDebugging(), it will get displayed as {} when the entire
+        // config object is dumped via console.log(). Confusingly, however, if the value itself
+        // is dumped, i.e. console.log( "debugging is:", config.debug ) it will get correctly 
+        // displayed.
+        //
+        // Explicitly converting the values to their javascript equivalents seems to work around
+        // this issue.
+        //
+        // FIXME: is this an example of a NativeScript runtime bug? 
 
-        console.log( "BackgroundGeolocationFbs::getConfig(): after getting config:", config );
+        config.locationProvider = nativeConfig.getLocationProvider().intValue();
+        config.desiredAccuracy = nativeConfig.getDesiredAccuracy().intValue();
+        config.stationaryRadius = nativeConfig.getStationaryRadius().floatValue();
+
+        config.debug = nativeConfig.isDebugging();
+
+        config.distanceFilter = nativeConfig.getDistanceFilter().intValue();
+
+        config.stopOnTerminate = nativeConfig.getStopOnTerminate();
+
+        config.startOnBoot = nativeConfig.getStartOnBoot();
+
+        config.interval = nativeConfig.getInterval().intValue();
+        config.fastestInterval = nativeConfig.getFastestInterval().intValue();
+        config.activitiesInterval = nativeConfig.getActivitiesInterval().intValue();
+
+        config.stopOnStillActivity = nativeConfig.getStopOnStillActivity();
+        config.notificationsEnabled = nativeConfig.getNotificationsEnabled();
+        config.startForeground = nativeConfig.getStartForeground();
+
+        config.notificationTitle = nativeConfig.getNotificationTitle();
+        config.notificationText = nativeConfig.getNotificationText();
+        config.notificationIconColor = nativeConfig.getNotificationIconColor();
+        config.notificationIconLarge = nativeConfig.getLargeNotificationIcon();
+        config.notificationIconSmall = nativeConfig.getSmallNotificationIcon();
+
+        // iOS settings not used on Android side of things. 
+
+        config.activityType = 'Other';
+        config.pauseLocationUpdates = false;
+        config.saveBatteryOnBackground = false;
+
+        config.url = nativeConfig.getUrl();
+        config.syncUrl = nativeConfig.getSyncUrl();
+        config.syncThreshold = nativeConfig.getSyncThreshold().intValue();
+        config.httpHeaders = nativeConfig.getHttpHeaders();
+        config.maxLocations = nativeConfig.getMaxLocations().intValue();
+        config.postTemplate = nativeConfig.getTemplate();
+
+        // console.log( "BackgroundGeolocationFbs::getConfig(): after converting config:", config );
 
         resolve( config );
 
@@ -539,9 +609,9 @@ export class BackgroundGeolocationFbs extends Common {
 
         let location = this.bgGeo.getCurrentLocation( timeout, maxAge, enableHighAccuracy );
 
-        console.log( "BackgroundGeolocationFbs::getCurrentLocation(): location:", location );
+        console.log( "BackgroundGeolocationFbs::getCurrentLocation(): got location from plugin:", location );
 
-        resolve( location );
+        resolve( this.convertLocation( location ) );
 
       } catch( error ) {
         reject( error );
@@ -591,7 +661,11 @@ export class BackgroundGeolocationFbs extends Common {
 
   showAppSettings() {
 
-    this.bgGeo.showAppSettings( app.android.context );
+    console.log( "BackgroundGeolocationFbs::showAppSettings()" );
+
+    // it's a static method.
+
+    com.marianhello.bgloc.BackgroundGeolocationFacade.showAppSettings( app.android.context );
 
   }
 
@@ -603,7 +677,9 @@ export class BackgroundGeolocationFbs extends Common {
 
   showLocationSettings() {
 
-    this.bgGeo.showLocationSettings( app.android.context );
+    // also a static method
+
+    com.marianhello.bgloc.BackgroundGeolocationFacade.showLocationSettings( app.android.context );
 
   }
 
@@ -642,7 +718,7 @@ export class BackgroundGeolocationFbs extends Common {
           //
           // FIXME: check to see if we can bypass converting to a JSONObject here. 
 
-          locations.push( this.convertLocation( rawLocations[ i ].toJSONObjectWithId() ) );
+          locations.push( this.convertLocation( rawLocations[ i ] ));
 
         }
 
@@ -870,12 +946,14 @@ export class BackgroundGeolocationFbs extends Common {
   *
   * @param {number} limit - number of most recent log entries to retrieve.
   *
-  * @return
+  * @return {Promise<LogEntry[]>}
   *
   * @link https://stackoverflow.com/questions/3293946/the-easiest-way-to-transform-collection-to-array
+  *
+  * @todo the java getLogEntries() method is whacked in that the offset is actually the id of the oldest message.
   */
 
-  getLogEntries( limit : number ) : Promise<any> {
+  getLogEntries( limit : number, offset: number, minLevel : string ) : Promise<any> {
 
     let rawLogEntries : any = [];
     let logEntries : any = [];
@@ -888,9 +966,9 @@ export class BackgroundGeolocationFbs extends Common {
 
         // note that getLogEntries() returns a java.util.Collection, not an array.
 
-        console.log( "BackgroundGeolocationFbs::getLogEntries(): attempting to get '" + limit + "' entries." );
+        console.log( "BackgroundGeolocationFbs::getLogEntries(): attempting to get '" + limit + "' entries from offset '" + offset + "'." );
 
-        let rawLogEntriesCollection : any = this.bgGeo.getLogEntries( new java.lang.Integer( limit ) );
+        let rawLogEntriesCollection : any = this.bgGeo.getLogEntries( limit, offset, minLevel );
 
         // this returns a java array. Apparently .foreach() cannot be used with this array.
 
@@ -905,11 +983,11 @@ export class BackgroundGeolocationFbs extends Common {
           let entry = rawLogEntries[i];
 
           logEntry = {
-            id: entry.getId(),
-            context: entry.getContext(),
+            id: entry.getId().intValue(),
+            context: entry.getContext().intValue(),
             level: entry.getLevel(),
             message: entry.getMessage(),
-            timestamp: entry.getTimestamp(),
+            timestamp: entry.getTimestamp().longValue(),
             loggerName: entry.getLoggerName(),
             stackTrace : entry.getStackTrace()
           };
@@ -942,128 +1020,57 @@ export class BackgroundGeolocationFbs extends Common {
   * but the unnecessary overhead would hurt my soul.
   *
   * @link https://stleary.github.io/JSON-java/org/json/JSONObject.html
+  * @link https://docs.nativescript.org/core-concepts/android-runtime/marshalling/java-to-js
+  *
+  * @todo why do some java values not have the longValue(), intValue(), floatValue() etc methods and others do. 
   */
 
   convertLocation( bgLocation ) {
 
-    // FIXME: My suspicion is that there's something in this method, possibly this console.log call that's
-    // causing console.log() crashes later on.
+    // FIXME: Previously, I was unnecessarily converting the BackgroundLocation objects to org.json.JSON objects
+    // which, when dumped via console.log(), would cause the app to crash after a several thousand interations.
     //
-    // console.log( "BackgroundGeolocationDelegate::convertLocation(): got background location:", bgLocation );
-
-    console.log( "BackgroundGeolocationDelegate::convertLocation(): top." );
+    // console.log( "BackgroundGeolocationFbs::convertLocation(): got background location:", bgLocation );
 
     let location : Location = new Location();
 
-    // FIXME: console.log( "...", location) will crash after about 12,000 locations or so
-    // even if we return the following hard coded object each time leading me to believe
-    // the NativeScript console.log crash is not related directly to JSONobject.
+    // locations returned by getCurrentLocation() do not contain an id, apparently.
 
-/*
-    location.id = 1;
+    if ( bgLocation.getLocationId() !== null ) {
+      location.id = bgLocation.getLocationId().longValue();
+    } 
 
-    location.provider = 'test';
+    console.log( "BackgroundGeolocationFbs::convertLocation(): after id." );
 
-    location.locationProvider = 0;
+    // locations returned by getCurrentLocation() do not contain the locationProvider, apparently.
 
-    location.time = 12345;
-    
-    location.latitude = 35.5;
+    if ( bgLocation.getLocationProvider() !== null ) {
+      location.locationProvider = bgLocation.getLocationProvider().intValue();
+    } 
 
-    location.longitude = 23.3;
+    location.provider = bgLocation.getProvider();
 
-    location.accuracy = 50.1;
+    // FIXME: For these values longValue(), intValue(), doubleValue(), and floatValue() are not 
+    // defined and I do not understand why.
 
-    location.speed = 50;
+    location.time = bgLocation.getTime();
 
-    location.altitude = 65.2;
+    location.latitude = bgLocation.getLatitude();
+    location.longitude = bgLocation.getLongitude();
 
-    location.bearing = 12.2;
+    location.accuracy = bgLocation.getAccuracy();
 
-    location.isFromMockProvider = true;
+    location.speed = bgLocation.getSpeed();
 
-    location.mockLocationsEnabled = true;
-*/
+    location.altitude = bgLocation.getAltitude();
 
-    // sadly it seems that if we attempt to get a value that is not present it 
-    // throws an exception and that seem to be a number of circumstances where not
-    // all values are present. As a result, these handstands are needed.
+    location.bearing = bgLocation.getBearing();
 
-    if ( bgLocation.isNull( 'id' ) ) {
-      location.id = null;
-    } else {
-      location.id = bgLocation.getLong( 'id' );
-    }
+    location.isFromMockProvider = Boolean( bgLocation.isFromMockProvider() );
 
-    if ( bgLocation.isNull( 'provider' ) ) {
-      location.provider = '';
-    } else {
-      location.provider = bgLocation.getString( 'provider' );
-    }
+    location.mockLocationsEnabled = Boolean( bgLocation.areMockLocationsEnabled() );
 
-    if ( bgLocation.isNull( 'locationProvider' ) ) {
-      location.locationProvider = null;
-    } else {
-      location.locationProvider = bgLocation.getInt( 'locationProvider' );
-    }
-
-    if ( bgLocation.isNull( 'time' ) ) {
-      location.time = null;
-    } else {
-      location.time = bgLocation.getLong( 'time' );
-    }
-
-    if ( bgLocation.isNull( 'latitude' ) ) {
-      location.latitude = null;
-    } else {
-      location.latitude = bgLocation.getDouble( 'latitude' );
-    }
-
-    if ( bgLocation.isNull( 'longitude' ) ) {
-      location.longitude = null;
-    } else {
-      location.longitude = bgLocation.getDouble( 'longitude' );
-    }
-
-    if ( bgLocation.isNull( 'accuracy' ) ) {
-      location.accuracy = null;
-    } else {
-      location.accuracy = bgLocation.getDouble( 'accuracy' );
-    }
-
-    // this seems to happen with the lockito fake gps app.
-
-    if ( bgLocation.isNull( 'speed' ) ) {
-      location.speed = null;
-    } else {
-      location.speed = bgLocation.getDouble( 'speed' );
-    }
-
-    if ( bgLocation.isNull( 'altitude' ) ) {
-      location.altitude = null;
-    } else {
-      location.altitude = bgLocation.getDouble( 'altitude' );
-    }
-
-    if ( bgLocation.isNull( 'bearing' ) ) {
-      location.bearing = null;
-    } else {
-      location.bearing = bgLocation.getDouble( 'bearing' );
-    }
-
-    if ( bgLocation.isNull( 'isFromMockProvider' ) ) {
-      location.isFromMockProvider = null;
-    } else {
-      location.isFromMockProvider = bgLocation.getBoolean( 'isFromMockProvider' );
-    }
-
-    if ( bgLocation.isNull( 'mockLocationsEnabled' ) ) {
-      location.mockLocationsEnabled = null;
-    } else {
-      location.mockLocationsEnabled = bgLocation.getBoolean( 'mockLocationsEnabled' );
-    }
-
-    console.log( "BackgroundGeolocationDelegate::convertLocation(): bottom" );
+    console.log( "BackgroundGeolocationFbs::convertLocation(): location is:", location );
 
     return location;
 

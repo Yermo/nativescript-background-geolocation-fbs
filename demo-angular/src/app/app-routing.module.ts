@@ -4,11 +4,15 @@ import { Routes } from "@angular/router";
 
 import { HomePageComponent } from "./pages/home/home-page.component";
 import { DebugLogPageComponent } from "./pages/debuglog/debug-log-page.component";
+import { LocationsPageComponent } from "./pages/locations/locations-page.component";
+import { SettingsPageComponent } from "./pages/settings/settings-page.component";
 
 const routes: Routes = [
-    { path: "", redirectTo: "/locations", pathMatch: "full" },
-    { path: "locations", component: HomePageComponent },
+    { path: "", redirectTo: "/home", pathMatch: "full" },
+    { path: "home", component: HomePageComponent },
     { path: "debuglog", component: DebugLogPageComponent },
+    { path: "locations", component: LocationsPageComponent },
+    { path: "settings", component: SettingsPageComponent }
 ];
 
 @NgModule({

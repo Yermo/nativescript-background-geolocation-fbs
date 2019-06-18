@@ -1,0 +1,33 @@
+<ActionBar class="action-bar" title="Locations Cache">
+  <NavigationButton android.systemIcon="ic_menu_back" text="Back" (tap)="goBack()"></NavigationButton>
+</ActionBar>
+
+<StackLayout class="page page-content m-5">
+
+  <ListView [items]="locations" class="list-group" *ngIf="locations.length>0" height="100%">
+    <ng-template let-location="item" let-i="index" let-odd="odd" let-even="even">
+
+      <GridLayout columns="auto,auto,auto" rows="auto,auto,auto,auto">
+        <ng-container>
+
+          <Label row="0" col="0" text="ID: {{location.id}}" class="h3 p-l-5 m-t-10"></Label>
+          <Label row="0" col="1" colspan="2" text="Time Stamp: {{location.time | date: 'short'}}" class="h3 p-l-15 m-t-10"></Label>
+
+          <Label row="1" col="0" text="lat: {{location.latitude | number:'1.2-5'}}" class="h3 p-l-5"></Label>
+          <Label row="1" col="1" text="lng: {{location.longitude | number: '1.2-5'}}" class="h3 p-l-15"></Label>
+          <Label row="1" col="2" text="alt: {{location.altitude | number: '1.2-5'}}" class="h3 p-l-15"></Label>
+
+          <Label row="2" col="0" text="speed: {{location.spoeed | number: '1.2-5'}}" class="h3 p-l-5"></Label>
+          <Label row="2" col="1" text="bearing: {{location.bearing | number: '1.2-5'}}" class="h3 p-l-15"></Label>
+          <Label row="2" col="2" text="accuracy: {{location.accuracy | number: '1.2-5'}}" class="h3 p-l-15"></Label>
+
+          <Label row="3" col="0" text="provider: {{location.provider}}" class="h3 p-l-5"></Label>
+          <Label row="3" col="1" text="locationProvider: {{location.locationProvider}}" class="h3 p-l-15"></Label>
+
+        </ng-container>
+      </GridLayout>
+
+    </ng-template>
+  </ListView>
+
+</StackLayout>

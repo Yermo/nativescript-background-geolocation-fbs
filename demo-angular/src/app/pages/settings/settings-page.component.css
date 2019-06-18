@@ -1,0 +1,11 @@
+.list-separator {
+    border-bottom-width: 1;
+    border-bottom-color: #eeeeee;
+}
+
+.scf-input {
+    border-width: 1;
+    border-color: #eeeeee;
+    padding: 4;
+    height: 28;
+}

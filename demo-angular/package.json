@@ -24,6 +24,7 @@
     "nativescript-angular": "~7.2.0",
     "nativescript-background-geolocation-fbs": "file:../src",
     "nativescript-theme-core": "~1.0.4",
+    "nativescript-ui-listview": "^6.3.0",
     "reflect-metadata": "~0.1.12",
     "rxjs": "~6.3.0",
     "rxjs-compat": "^6.5.1",
