@@ -698,7 +698,7 @@ See [CHANGES.md](/CHANGES.md)
 
 [Apache License](http://www.apache.org/licenses/LICENSE-2.0)
 
-Copyright (c) 2013 Christopher Scott, Transistor Software
+Copyright (c) 2019 Yermo Lamers, Flying Brick Software, LLC
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
