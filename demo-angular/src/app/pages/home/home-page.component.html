@@ -1,0 +1,60 @@
+<ActionBar class="action-bar" title="Background Geolocation Demo">
+</ActionBar>
+
+<StackLayout class="page-wrapper">
+  <ScrollView height="100%">
+    <StackLayout class="p-5">
+
+      <WrapLayout>
+        <Button text="Settings" (tap)="settings()" class="button button-primary"></Button>
+        <Button text="App Settings" (tap)="appSettings()" [isEnabled]="locationsService.isConfigured" class="button button-primary"></Button>
+        <Button text="Location Settings" (tap)="locationSettings()" [isEnabled]="locationsService.isConfigured" class="button button-primary"></Button>
+      </WrapLayout>
+
+      <WrapLayout>
+        <Button text="Start" (tap)="start()" class="button" [isEnabled]="!locationsService.isStarted" [class.button-primary]="!locationsService.isStarted"></Button>
+        <Button text="Pause" (tap)="pause()" class="button" [isEnabled]="locationsService.isStarted && ! locationsService.isPaused" [class.button-primary]="locationsService.isStarted && !locationsService.isPaused"></Button>
+        <Button text="Resume" (tap)="resume()" class="button" [isEnabled]="locationsService.isStarted && locationsService.isPaused" [class.button-primary]="locationsService.isStarted && locationsService.isPaused"></Button>
+        <Button text="Stop" (tap)="stop()" class="button" [isEnabled]="locationsService.isStarted" [class.button-primary]="locationsService.isStarted"></Button>
+      </WrapLayout>
+
+      <WrapLayout>
+        <Button text="Locations" (tap)="locations()" [isEnabled]="locationsService.isConfigured" class="button" [class.button-primary]="locationsService.isConfigured"></Button>
+        <Button text="Current" (tap)="currentLocation()" [isEnabled]="locationsService.isConfigured" class="button" [class.button-primary]="locationsService.isConfigured"></Button>
+        <Button text="Clear Locations" (tap)="clearLocations()" [isEnabled]="locationsService.isConfigured" class="button" [class.button-primary]="locationsService.isConfigured"></Button>
+      </WrapLayout>
+
+      <WrapLayout>
+        <Button text="Status" (tap)="status()" [isEnabled]="locationsService.isConfigured" class="button" [class.button-primary]="locationsService.isConfigured"></Button>
+        <Button text="Debug Log" (tap)="debuglog()" [isEnabled]="locationsService.isConfigured" class="button" [class.button-primary]="locationsService.isConfigured"></Button>
+      </WrapLayout>
+
+      <GridLayout columns="*,*" rows="auto,auto" class="m-y-30 m-x-20">
+        <!-- Run Time -->
+        <Label [text]="runtime$ | async" row="0" col="0" class="large text-left"></Label>
+        <Label text="Runtime" row="1" col="0" class="text-left" fontSize="35"></Label>
+        <!-- Current Location -->
+        <Label *ngIf="locations$ | async as location" text="{{ location.id }}" row="0" col="1" class="large text-right"></Label>
+        <Label text="Locations" row="1" col="1" fontSize="35" class="text-right"></Label>
+      </GridLayout>
+
+      <GridLayout columns="auto,auto,auto" rows="auto,auto,auto,auto" class="p-l-5">
+        <ng-container  *ngIf="locations$ | async as location">
+          <Label row="0" col="0" colspan="3" horizontalAlignment="center" text="Time Stamp: {{location.time | date: 'mediumTime'}}" class="h3 p-l-15"></Label>
+
+          <Label row="1" col="0" text="lat: {{location.latitude | number:'1.2-5'}}" class="h3 p-l-15"></Label>
+          <Label row="1" col="1" text="lng: {{location.longitude | number: '1.2-5'}}" class="h3 p-l-15"></Label>
+          <Label row="1" col="2" text="alt: {{location.altitude | number: '1.2-5'}}" class="h3 p-l-15"></Label>
+
+          <Label row="2" col="0" text="speed: {{location.speed | number: '1.2-5'}}" class="h3 p-l-15"></Label>
+          <Label row="2" col="1" text="bearing: {{location.bearing | number: '1.2-5'}}" class="h3 p-l-15"></Label>
+          <Label row="2" col="2" text="accuracy: {{location.accuracy | number: '1.2-5'}}" class="h3 p-l-15"></Label>
+
+          <Label row="3" col="0" text="provider: {{location.provider}}" class="h3 p-l-15"></Label>
+          <Label row="3" col="1" text="locationProvider: {{location.locationProvider}}" class="h3 p-l-15"></Label>
+
+          </ng-container>
+        </GridLayout>
+    </StackLayout>
+  </ScrollView>  
+</StackLayout>

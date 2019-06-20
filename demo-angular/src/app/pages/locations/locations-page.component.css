@@ -1,0 +1,20 @@
+.transparent-area {
+  background-color: rgba(255, 255, 255, 210);
+  border-radius: 20;
+  padding: 20;
+  border-color: black;
+  border-width: 1;
+  text-color: black;
+}
+
+.header {
+  horizontal-align: center;
+  font-size: 25;
+  font-weight: 600;
+  margin-bottom: 70;
+  text-align: center;
+  color: #D51A1A;
+}
+
+
+

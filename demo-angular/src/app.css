@@ -1,0 +1,103 @@
+/*
+In NativeScript, the app.css file is where you place CSS rules that
+you would like to apply to your entire application. Check out
+http://docs.nativescript.org/ui/styling for a full list of the CSS
+selectors and properties you can use to style UI components.
+
+/*
+In many cases you may want to use the NativeScript core theme instead
+of writing your own CSS rules. For a full list of class names in the theme
+refer to http://docs.nativescript.org/ui/theme.
+*/
+@import '~nativescript-theme-core/css/core.light.css';
+
+
+// Place any CSS rules you want to apply on both iOS and Android here.
+
+// This is where the vast majority of your CSS code goes.
+// Font icon class
+
+.fa {
+    font-family: "FontAwesome", FontAwesome;
+}
+
+.mdi {
+  font-family: Material Icons, MaterialIcons-Regular;
+}
+
+.far {
+    font-family: Font Awesome 5 Free, fa-regular-400;
+    font-weight: 400;
+}
+
+.fas {
+    font-family: Font Awesome 5 Free Solid, fa-solid-900;
+    font-weight: 400;
+}
+
+/* borrowed from the plugin showcase */
+
+ActionBar {
+  background-color: #67B26F;
+}
+
+.page-wrapper {
+  background: #CCCCCC;
+  text-color: black;
+  height: 100%;
+}
+
+button {
+  background-color: #6494AA;
+  padding: 8 10;
+  margin: 8 8 4 0;
+  font-size: 14;
+  border-radius: 4;
+  border-width: 1;
+  border-color: #fff;
+}
+
+Button:highlighted {
+  opacity: 0.7;
+}
+
+.button-primary {
+  background-color: #6baad8;
+}
+
+.button {
+  color: #ffffff;
+}
+
+.button-success {
+  background-color: #51ae8c;
+}
+
+.button-info {
+  background-color: #516a78;
+}
+
+.button-warning {
+  background-color: #f18b34;
+}
+
+.button-error {
+  background-color: #ee664c;
+}
+
+.button-custom {
+  background-color: #6baad8;
+}
+
+.button-custom-alt {
+  background-color: yellowgreen;
+}
+
+.button-custom-font {
+  background-color: #264bcd;
+}
+
+.button-dismiss {
+  background-color: #444
+}
+
