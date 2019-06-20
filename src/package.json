@@ -17,6 +17,7 @@
 	"scripts": {
 		"tsc": "npm i && tsc",
 		"build": "npm run tsc && npm run build.native",
+		"build.dist": "npm run build && cd ../publish && ./pack.sh && ./unpack.sh",
 		"build.native": "node scripts/build-native.js",
 		"postclone": "npm i && node scripts/postclone.js",
 		"tslint": "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude \"**/node_modules/**\"",
