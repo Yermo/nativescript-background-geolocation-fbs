@@ -1,0 +1,1 @@
+LIBRARY_SEARCH_PATHS = $(inherited) "$(SRCROOT)/../../node_modules/nativescript-background-geolocation-fbs/platforms/ios"

@@ -7,6 +7,12 @@ API relies heavily on promises instead of the callback structure used by the cor
 
 The majority of this documentation comes from the cordova plugin repository managed by @mauron85.
 
+## Heap Errors
+
+If you get javascript out of heap errors do:
+
+export NODE_OPTIONS=--max-old-space-size=4096
+
 ## Running the demo on Android
 
 I've put together a demo using NativeScript + Angular in ./ngdemo that loads the plugin and displays the raw data of
