@@ -11,8 +11,262 @@ import { LogEntry } from './logentry';
 import * as utils from 'tns-core-modules/utils/utils';
 import * as app from "tns-core-modules/application";
 
-let MAURBackgroundGeolocationFacade: any;
-let MAURConfig: any;
+// ----------------------------------------------------------------------------------------------------------------------
+
+/**
+* Background Geolocation Delegate
+*
+* @link https://docs.nativescript.org/core-concepts/ios-runtime/how-to/ObjC-Subclassing
+*/
+
+class BackgroundGeolocationDelegate extends NSObject implements MAURProviderDelegate {
+
+  private bgGeo : any;
+  private callbacks : Array<any>;
+
+  // a reference to the BackgroundGeolocationFbs instance because we need access to some of its
+  // methods, notably convertLocation()
+  //
+  // FIXME: This doesn't feel quite right.
+
+  public bgFbs : BackgroundGeolocationFbs;
+
+  // some extra mapping so objective-c will know how to interact with our 
+  // extended delegate
+
+  public static ObjCProtocols = [ MAURProviderDelegate ];
+
+  // ------------------------------------------------------------
+
+  static new(): BackgroundGeolocationDelegate {
+    return <BackgroundGeolocationDelegate>super.new();
+  }
+
+  // ---------------------------------------------------------
+
+  /**
+  * register an event callback. 
+  */
+
+  public on( eventType, callback ) {
+
+    if ( ! this.callbacks[ eventType ] ) {
+      throw new Error( "no such event type '" + eventType + "'" );
+    }
+
+    this.callbacks[ eventType ].push( callback );
+
+  }
+
+  // ---------------------------------------------------------
+
+  /**
+  * unregister an event callback
+  */
+
+  public off( eventType, callback ) {
+    let index = this.callbacks[ eventType ].findIndex( ( entry ) => {
+      return entry == callback;
+    });
+
+    if ( index == -1 ) {
+      throw new Error( "No registered callback" );
+    }
+
+    this.callbacks[ eventType ][index] = null;
+    this.callbacks[ eventType ].splice( index, 1 );
+
+  }
+
+  // ---------------------------------------------------------
+
+  /**
+  * unregister all callbacks.
+  */
+
+  public offAll() {
+    this.initCallbacksList();
+  }
+
+  // ---------------------------------------------------------
+
+  public onAuthorizationChanged( authStatus : MAURLocationAuthorizationStatus ): void {
+
+    console.log( "BackgroundGeolocationDelege::onAuthorizationChanged(): authStatus:", authStatus );
+
+    this.callbacks[ 'authorization' ].forEach( ( callback ) => {
+      callback( authStatus );
+    });
+
+  }
+
+  // ---------------------------------------------------------
+
+  public onLocationChanged( bgLocation : MAURLocation ): void {
+
+    try {
+
+      console.log( "BackgroundGeolocationDelegate::onLocationChanged(): top." );
+
+      let location : Location = this.bgFbs.convertLocation( bgLocation );
+
+      console.log( "BackgroundGeolocationDelege::onLocationChanged(): after bgLocation converted to location:", location );
+
+      // FIXME: the following line crashes after about 12,000 iterations or it crashes in the callback. See ngdemo location.service.ts. 
+
+      // console.log( "BackgroundGeolocationDelege::onLocationChanged(): bgLocation converted to location:", location );
+
+      this.callbacks[ 'location' ].forEach( ( callback ) => {
+
+        console.log( "BackgroundGeolocationDelegate::onLocationChanged(): forwarding to callback" );
+
+        callback( location );
+
+      });
+
+    } catch( error ) {
+
+      console.error( "onLocationChanged(): error:", error );
+
+    }
+
+  }
+
+  // ---------------------------------------------------------
+
+  public onStationaryChanged( bgLocation : MAURLocation ): void {
+
+    try {
+
+      // FIXME: sometimes it seems there is no id.
+
+      let location : Location = this.bgFbs.convertLocation( bgLocation );
+
+      console.log( "BackgroundGeolocationDelege::onStationaryChanged(): location with id:", location.id );
+
+      this.callbacks[ 'stationary' ].forEach( ( callback ) => {
+        callback( location );
+      });
+    } catch( error ) {
+
+      console.error( "onStationaryChanged(): error:", error );
+
+    };
+
+  }
+
+  // ---------------------------------------------------------
+
+  public onLocationPause(): void {
+
+    try {
+
+      console.log( "BackgroundGeolocationDelege::onLocationPause(): top" );
+
+      this.callbacks[ 'locationpause' ].forEach( ( callback ) => {
+        callback( location );
+      });
+
+    } catch( error ) {
+
+      console.error( "onLocationResume(): error:", error );
+
+    }
+
+  } 
+
+  // ---------------------------------------------------------
+
+  public onLocationResume(): void {
+
+    try {
+
+      console.log( "BackgroundGeolocationDelege::onLocationResume(): top" );
+
+      this.callbacks[ 'locationresume' ].forEach( ( callback ) => {
+        callback( location );
+      });
+
+    } catch( error ) {
+
+      console.error( "onLocationResume(): error:", error );
+
+    }
+
+  } 
+
+  // ---------------------------------------------------------
+
+  public onActivityChanged( activity: MAURActivity ): void {
+
+    console.log( "BackgroundGeolocationDelege::onActivityChanged(): activity:", activity );
+
+    this.callbacks[ 'activity' ].forEach( ( callback ) => {
+      callback( activity );
+    });
+
+  }
+
+  // -----------------------------------------------------------
+
+  public onAbortRequested(): void {
+
+    console.log( "BackgroundGeolocationDelege::onAbortRequested():" );
+
+    this.callbacks[ 'abort_requested' ].forEach( ( callback ) => {
+      callback();
+    });
+
+  }
+
+  // ------------------------------------------------------------
+
+  public onHttpAuthorization(): void {
+
+    console.log( "BackgroundGeolocationDelege::onHttpAuthorization():" );
+
+    this.callbacks[ 'http_authorization' ].forEach( ( callback ) => {
+      callback();
+    });
+
+  }
+
+  // ------------------------------------------------------------
+
+  public onError( error: NSError ): void {
+
+    console.log( "BackgroundGeolocationDelege::onError():" );
+
+    this.callbacks[ 'error' ].forEach( ( callback ) => {
+      callback( error );
+    });
+
+  }
+
+  // ---------------------------------------------------------
+
+  public initCallbacksList() {
+
+    this.callbacks = [];
+
+    this.callbacks[ 'location' ] = [];
+    this.callbacks[ 'stationary' ] = [];
+    this.callbacks[ 'activity' ] = [];
+    this.callbacks[ 'error' ] = [];
+    this.callbacks[ 'authorization' ] = [];
+
+    this.callbacks[ 'abort_requested' ] = [];
+    this.callbacks[ 'http_authorizaton' ] = [];
+
+    this.callbacks[ 'start' ] = [];
+    this.callbacks[ 'stop' ] = [];
+    this.callbacks[ 'foreground' ] = [];
+    this.callbacks[ 'background' ] = [];
+    this.callbacks[ 'service_status' ] = [];
+
+  }
+
+} // end of class BackgroundGeolocationDelegate
 
 // ----------------------------------------------------------------------------------------------------------------------
 
@@ -22,8 +276,8 @@ let MAURConfig: any;
 
 export class BackgroundGeolocationFbs extends Common {
 
-  private bgGeo : any;
-  private bgDelegate: any;
+  private bgGeo : MAURBackgroundGeolocationFacade;
+  public bgDelegate : BackgroundGeolocationDelegate;
 
   // ------------------------------------------------------------
 
@@ -35,14 +289,25 @@ export class BackgroundGeolocationFbs extends Common {
 
     super();
 
-    // this.bgDelegate = new BackgroundGeolocationDelegate( this );
-
     console.log( "constructor(): MAURBackgroundGeolocationFacade is:", MAURBackgroundGeolocationFacade );
 
-    this.bgGeo = MAURBackgroundGeolocationFacade.alloc().init();
-    this.bgGeo.delegate = this;
+    let configInstance : MAURConfig = MAURConfig.alloc().init();
+    configInstance = configInstance.initWithDefaults();
 
-    console.log( "BackgroundGeolocationFbs::constructor(): after creating facade:", this.bgGeo );
+    this.bgGeo = MAURBackgroundGeolocationFacade.alloc().init();
+
+    console.log( "constructor(): After creating facade:", this.bgGeo );
+
+    this.bgDelegate = <BackgroundGeolocationDelegate>BackgroundGeolocationDelegate.new();
+
+    // FIXME: ugly
+
+    this.bgDelegate.initCallbacksList();
+    this.bgDelegate.bgFbs = this;
+
+    this.bgGeo.delegate = this.bgDelegate;
+
+    console.log( "BackgroundGeolocationFbs::constructor(): after creating delegate:", this.bgGeo.delegate );
 
   } // end of constructor()
 
@@ -65,19 +330,23 @@ export class BackgroundGeolocationFbs extends Common {
 
       try {
 
-        let configInstance = MAURConfig.initWithDefaults();
+        let configInstance : MAURConfig = MAURConfig.alloc().init();
 
+        configInstance = configInstance.initWithDefaults();
+
+        console.log( "BackgroundGeolocationFbs::configure(): configInstancee:", configInstance );
+        console.log( "BackgroundGeolocationFbs::configure(): this.bgGeo:", this.bgGeo );
         console.log( "BackgroundGeolocationFbs::configure(): setting:", config );
 
-/*
         if ( typeof config.locationProvider != 'undefined' ) {
-          configInstance.setLocationProvider( new java.lang.Integer( config.locationProvider ) );
+          configInstance.locationProvider = config.locationProvider;
         }
 
         if ( typeof config.desiredAccuracy != 'undefined' ) {
-          configInstance.setDesiredAccuracy( new java.lang.Integer( config.desiredAccuracy ) );
+          configInstance.desiredAccuracy = config.desiredAccuracy;
         }
 
+/*
         if ( typeof config.stationaryRadius != 'undefined' ) {
 
           // FIXME: If I use a "new java.lang.Float( config.stationaryRadius )" here 
@@ -191,7 +460,7 @@ export class BackgroundGeolocationFbs extends Common {
 
         // now we just set the instance into the background geolocation library
 
-        this.bgGeo.configure( configInstance );
+        this.bgGeo.configureError( configInstance );
 
         resolve( config );
 
@@ -242,47 +511,33 @@ export class BackgroundGeolocationFbs extends Common {
         //
         // FIXME: is this an example of a NativeScript runtime bug? 
 
-/*
-        config.locationProvider = nativeConfig.getLocationProvider().intValue();
-        config.desiredAccuracy = nativeConfig.getDesiredAccuracy().intValue();
-        config.stationaryRadius = nativeConfig.getStationaryRadius().floatValue();
+        config.locationProvider = nativeConfig.locationProvider;
+        config.desiredAccuracy = nativeConfig.desiredAccuracy;
+        config.stationaryRadius = nativeConfig.stationaryRadius;
 
-        config.debug = nativeConfig.isDebugging();
+        config.debug = nativeConfig._debug;
 
-        config.distanceFilter = nativeConfig.getDistanceFilter().intValue();
+        config.distanceFilter = nativeConfig.distanceFilter;
 
-        config.stopOnTerminate = nativeConfig.getStopOnTerminate();
+        config.stopOnTerminate = nativeConfig._stopOnTerminate;
 
-        config.startOnBoot = nativeConfig.getStartOnBoot();
-
-        config.interval = nativeConfig.getInterval().intValue();
-        config.fastestInterval = nativeConfig.getFastestInterval().intValue();
-        config.activitiesInterval = nativeConfig.getActivitiesInterval().intValue();
-
-        config.stopOnStillActivity = nativeConfig.getStopOnStillActivity();
-        config.notificationsEnabled = nativeConfig.getNotificationsEnabled();
-        config.startForeground = nativeConfig.getStartForeground();
-
-        config.notificationTitle = nativeConfig.getNotificationTitle();
-        config.notificationText = nativeConfig.getNotificationText();
-        config.notificationIconColor = nativeConfig.getNotificationIconColor();
-        config.notificationIconLarge = nativeConfig.getLargeNotificationIcon();
-        config.notificationIconSmall = nativeConfig.getSmallNotificationIcon();
+        config.activitiesInterval = nativeConfig.activitiesInterval;
 
         // iOS settings not used on Android side of things. 
 
-        config.activityType = 'Other';
-        config.pauseLocationUpdates = false;
-        config.saveBatteryOnBackground = false;
+        config.activityType = nativeConfig.activityType;
+        config.pauseLocationUpdates = nativeConfig._pauseLocationUpdates;
+        config.saveBatteryOnBackground = nativeConfig._saveBatteryOnBackground;
 
-        config.url = nativeConfig.getUrl();
-        config.syncUrl = nativeConfig.getSyncUrl();
-        config.syncThreshold = nativeConfig.getSyncThreshold().intValue();
-        config.httpHeaders = nativeConfig.getHttpHeaders();
-        config.maxLocations = nativeConfig.getMaxLocations().intValue();
-        config.postTemplate = nativeConfig.getTemplate();
+        config.url = nativeConfig.url;
+        config.syncUrl = nativeConfig.syncUrl;
+        config.syncThreshold = nativeConfig.syncThreshold;
 
-*/
+        config.httpHeaders = nativeConfig.getHttpHeadersAsString();
+        config.maxLocations = nativeConfig.maxLocations;
+
+        config.postTemplate = nativeConfig._template;
+
         // console.log( "BackgroundGeolocationFbs::getConfig(): after converting config:", config );
 
         resolve( config );
@@ -305,7 +560,7 @@ export class BackgroundGeolocationFbs extends Common {
 
       try {
 
-        console.log( "BackgroundGeolocationFbs::start(): calling bgGeo.start(), this.bgGeo is:", this.bgGeo );
+        console.log( "BackgroundGeolocationFbs::start(): before calling bgGeo.start(), this.bgGeo is:", this.bgGeo );
 
         this.bgGeo.start();
 
@@ -363,7 +618,9 @@ export class BackgroundGeolocationFbs extends Common {
 
         console.log( "BackgroundGeolocationFbs::getCurrentLocation(): timeout '" + timeout + "' maxAge '" + maxAge + "' enableHighAccuracy '" + enableHighAccuracy + "'" );
 
-        let location = this.bgGeo.getCurrentLocation( timeout, maxAge, enableHighAccuracy );
+let location : any;
+
+        // let location = this.bgGeo.getCurrentLocation( timeout, maxAge, enableHighAccuracy );
 
         console.log( "BackgroundGeolocationFbs::getCurrentLocation(): got location from plugin:", location );
 
@@ -527,7 +784,7 @@ export class BackgroundGeolocationFbs extends Common {
 
       try {
 
-        this.bgGeo.deleteLocation( locationId );
+     //   this.bgGeo.deleteLocation( locationId );
 
         resolve( true );
 
@@ -570,7 +827,7 @@ export class BackgroundGeolocationFbs extends Common {
   */
 
   on( eventType, callback ) {
-    // this.bgDelegate.on( eventType, callback );
+    this.bgDelegate.on( eventType, callback );
   }
 
   // -------------------------------------------------------------
@@ -579,8 +836,8 @@ export class BackgroundGeolocationFbs extends Common {
   * unregister an event handler
   */
 
-  off( eventType ) {
-    // this.bgDelegate.off( eventType );
+  off( eventType, callback ) {
+    this.bgDelegate.off( eventType, callback );
   }
 
   // -------------------------------------------------------------
@@ -590,7 +847,7 @@ export class BackgroundGeolocationFbs extends Common {
   */
 
   unregisterAllEventListeners() {
-    // this.bgDelegate.offAll();
+    this.bgDelegate.offAll();
   }
 
   // -------------------------------------------------------------
@@ -630,7 +887,7 @@ export class BackgroundGeolocationFbs extends Common {
       try {
 
         console.log( "BackgroundGeolocationFbs::resume()" );
-
+ 
         this.bgGeo.start();
 
         resolve( true );
@@ -708,7 +965,9 @@ export class BackgroundGeolocationFbs extends Common {
 
         console.log( "BackgroundGeolocationFbs::getLogEntries(): attempting to get '" + limit + "' entries from offset '" + offset + "'." );
 
-        let rawLogEntriesCollection : any = this.bgGeo.getLogEntries( limit, offset, minLevel );
+let rawLogEntriesCollection : any;
+
+//        let rawLogEntriesCollection : any = this.bgGeo.getLogEntries( limit, offset, minLevel );
 
 /*
         // this returns a java array. Apparently .foreach() cannot be used with this array.
@@ -749,25 +1008,15 @@ export class BackgroundGeolocationFbs extends Common {
   // ---------------------------------------------------------
 
   /**
-  * Convert JSONObject location to js json.
+  * Convert MAURLocation location to Location.
   *
-  * Background location objects are returned as java JSON objects
-  * from https://stleary.github.io/JSON-java/org/json/JSONObject.html
+  * Background location objects are returned as MAURLocation objects.
   *
-  * The properties of these cannot, apparently, be directly accessed. So this
-  * method is here to convert a background location object into a form
+  * This method is here to convert a background location object into a form
   * that's easier to use from typescript/javascript. 
-  *
-  * I could have chosen to simple create a JSON string and then parse that
-  * but the unnecessary overhead would hurt my soul.
-  *
-  * @link https://stleary.github.io/JSON-java/org/json/JSONObject.html
-  * @link https://docs.nativescript.org/core-concepts/android-runtime/marshalling/java-to-js
-  *
-  * @todo why do some java values not have the longValue(), intValue(), floatValue() etc methods and others do. 
   */
 
-  convertLocation( bgLocation ) {
+  convertLocation( bgLocation: MAURLocation ) {
 
     // FIXME: Previously, I was unnecessarily converting the BackgroundLocation objects to org.json.JSON objects
     // which, when dumped via console.log(), would cause the app to crash after a several thousand interations.
@@ -776,44 +1025,32 @@ export class BackgroundGeolocationFbs extends Common {
 
     let location : Location = new Location();
 
-/*
     // locations returned by getCurrentLocation() do not contain an id, apparently.
 
-    if ( bgLocation.getLocationId() !== null ) {
-      location.id = bgLocation.getLocationId().longValue();
+    if ( bgLocation.locationId !== null ) {
+      location.id = bgLocation.locationId;
     } 
 
     console.log( "BackgroundGeolocationFbs::convertLocation(): after id." );
 
-    // locations returned by getCurrentLocation() do not contain the locationProvider, apparently.
-
-    if ( bgLocation.getLocationProvider() !== null ) {
-      location.locationProvider = bgLocation.getLocationProvider().intValue();
+    if ( bgLocation.locationProvider !== null ) {
+      location.locationProvider = bgLocation.locationProvider;
     } 
 
-    location.provider = bgLocation.getProvider();
+    location.provider = bgLocation.provider;
 
-    // FIXME: For these values longValue(), intValue(), doubleValue(), and floatValue() are not 
-    // defined and I do not understand why.
+    // location.time = bgLocation.time.timeIntervalSince1970;
 
-    location.time = bgLocation.getTime();
+    location.latitude = bgLocation.latitude;
+    location.longitude = bgLocation.longitude;
 
-    location.latitude = bgLocation.getLatitude();
-    location.longitude = bgLocation.getLongitude();
+    location.accuracy = bgLocation.accuracy;
 
-    location.accuracy = bgLocation.getAccuracy();
+    location.speed = bgLocation.speed;
 
-    location.speed = bgLocation.getSpeed();
+    location.altitude = bgLocation.altitude;
 
-    location.altitude = bgLocation.getAltitude();
-
-    location.bearing = bgLocation.getBearing();
-
-    location.isFromMockProvider = Boolean( bgLocation.isFromMockProvider() );
-
-    location.mockLocationsEnabled = Boolean( bgLocation.areMockLocationsEnabled() );
-
-*/
+    location.bearing = bgLocation.heading;
 
     console.log( "BackgroundGeolocationFbs::convertLocation(): location is:", location );
 
