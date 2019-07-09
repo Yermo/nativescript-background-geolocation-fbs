@@ -40,7 +40,8 @@
 
       <GridLayout columns="auto,auto,auto" rows="auto,auto,auto,auto" class="p-l-5">
         <ng-container  *ngIf="locations$ | async as location">
-          <Label row="0" col="0" colspan="3" horizontalAlignment="center" text="Time Stamp: {{location.time | date: 'mediumTime'}}" class="h3 p-l-15"></Label>
+          <Label row="0" col="0" colspan="2" horizontalAlignment="center" text="{{location.time | date: 'short'}}" class="h3 p-l-15"></Label>
+          <Label row="0" col="3" horizontalAlignment="center" text="{{location.id}}" class="h3 p-l-15"></Label>
 
           <Label row="1" col="0" text="lat: {{location.latitude | number:'1.2-5'}}" class="h3 p-l-15"></Label>
           <Label row="1" col="1" text="lng: {{location.longitude | number: '1.2-5'}}" class="h3 p-l-15"></Label>

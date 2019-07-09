@@ -118,7 +118,7 @@ export class DebugLogPageComponent implements OnInit {
 
     let messages = await this.locationsService.getLogEntries( 25, entry.id, 'DEBUG' );
 
-    console.log( "DebugLogPageComponent::getMoreMessages(): get messages:", messages );
+    // console.log( "DebugLogPageComponent::getMoreMessages(): get messages:", messages );
 
     this._messagesObservable.push( messages );
 

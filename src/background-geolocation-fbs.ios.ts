@@ -106,15 +106,9 @@ class BackgroundGeolocationDelegate extends NSObject implements MAURProviderDele
 
     try {
 
-      console.log( "BackgroundGeolocationDelegate::onLocationChanged(): top." );
-
       let location : Location = this.bgFbs.convertLocation( bgLocation );
 
       console.log( "BackgroundGeolocationDelege::onLocationChanged(): after bgLocation converted to location:", location );
-
-      // FIXME: the following line crashes after about 12,000 iterations or it crashes in the callback. See ngdemo location.service.ts. 
-
-      // console.log( "BackgroundGeolocationDelege::onLocationChanged(): bgLocation converted to location:", location );
 
       this.callbacks[ 'location' ].forEach( ( callback ) => {
 
@@ -271,7 +265,7 @@ class BackgroundGeolocationDelegate extends NSObject implements MAURProviderDele
 // ----------------------------------------------------------------------------------------------------------------------
 
 /**
-* Main Entry Point for Background Geolocation
+* Background Geolocation for iOS
 */
 
 export class BackgroundGeolocationFbs extends Common {
@@ -346,110 +340,56 @@ export class BackgroundGeolocationFbs extends Common {
           configInstance.desiredAccuracy = config.desiredAccuracy;
         }
 
-/*
         if ( typeof config.stationaryRadius != 'undefined' ) {
-
-          // FIXME: If I use a "new java.lang.Float( config.stationaryRadius )" here 
-          // it passes a nonsense number to the java method. However, passing the raw 
-          // javascript number here seems to work.
-
-          configInstance.setStationaryRadius( config.stationaryRadius );
+          configInstance.stationaryRadius = config.stationaryRadius;
         }
 
-        if ( typeof config.debug != 'undefined' ) {
-
-          console.log( "BackgroundGeolocationFbs::configure(): setting config.debug to:", config.debug );
-
-          configInstance.setDebugging( new java.lang.Boolean( config.debug ) );
+        if (( typeof config.debug != 'undefined' ) && ( config.debug )) {
+          configInstance._debug = 1;
         } else {
-          configInstance.setDebugging( new java.lang.Boolean( false ) );
+          configInstance._debug = 0;
         }
 
         if ( typeof config.distanceFilter != 'undefined' ) {
-          configInstance.setDistanceFilter( new java.lang.Integer( config.distanceFilter ) );
+          configInstance.distanceFilter = config.distanceFilter;
         }
 
         if ( typeof config.stopOnTerminate != 'undefined' ) {
-          configInstance.setStopOnTerminate( new java.lang.Boolean( config.stopOnTerminate ) );
-        }
-
-        if ( typeof config.startOnBoot != 'undefined' ) {
-          configInstance.setStartOnBoot( new java.lang.Boolean( config.startOnBoot ) );
-        }
-
-        if ( typeof config.interval != 'undefined' ) {
-          configInstance.setInterval( new java.lang.Integer( config.interval ) );
-        }
-
-        if ( typeof config.fastestInterval != 'undefined' ) {
-          configInstance.setFastestInterval( new java.lang.Integer( config.fastestInterval ) );
+          configInstance._stopOnTerminate = config.stopOnTerminate;
         }
 
         if ( typeof config.activitiesInterval != 'undefined' ) {
-          configInstance.setActivitiesInterval( new java.lang.Integer( config.activitiesInterval ) );
-        }
-
-        if ( typeof config.stopOnStillActivity != 'undefined' ) {
-          configInstance.setStopOnStillActivity( new java.lang.Boolean( config.stopOnStillActivity ) );
-        }
-
-        if ( typeof config.notificationsEnabled != 'undefined' ) {
-          configInstance.setNotificationsEnabled( new java.lang.Boolean( config.notificationsEnabled ));
-        }
-
-        if ( typeof config.setStartForeground != 'undefined' ) {
-          configInstance.setStartForeground( new java.lang.Boolean( config.setStartForeground ) );
-        }
-
-        if ( typeof config.setNotificationTitle != 'undefined' ) {
-          configInstance.setNotificationTitle( config.setNotificationTitle );
-        }
-
-        if ( typeof config.notificationText != 'undefined' ) {
-          configInstance.setNotificationText( config.notificationText );
-        }
-
-        if ( typeof config.notificationIconColor != 'undefined' ) {
-          configInstance.setNotificationIconColor( config.notificationIconColor );
-        }
-
-        if  ( typeof config.notificationIconLarge != 'undefined' ) {
-          configInstance.setLargeNotificationIcon( config.notificationIconLarge );
-        }
-
-        if ( typeof config.notificationIconSmall != 'undefined' ) {
-          configInstance.setSmallNotificationIcon( config.notificationIconSmall );
+          configInstance.activitiesInterval = config.activitiesInterval;
         }
 
         if ( typeof config.url != 'undefined' ) {
-          configInstance.setUrl( config.url );
+          configInstance.url = config.url;
         }
 
         if ( typeof config.syncUrl != 'undefined' ) {
-          configInstance.setSyncUrl( config.syncUrl );
+          configInstance.syncUrl = config.syncUrl;
         }
 
         if ( typeof config.syncThreshold != 'undefined' ) {
-          configInstance.setSyncThreshold( new java.lang.Integer(  config.syncThreshold ) );
+          configInstance.syncThreshold = config.syncThreshold;
         }
 
-*/
         /**
-        * @todo FIXME: needs marshalling
+        * @todo FIXME
         */
 
 /*
         if ( typeof config.httpHeaders != 'undefined' ) {
           configInstance.setHttpHeaders( config.httpHeaders );
         }
+*/
 
         if ( typeof config.maxLocations != 'undefined' ) {
-          configInstance.setMaxLocations( new java.lang.Integer( config.maxLocations ) );
+          configInstance.maxLocations = config.maxLocations;
         }
 
-*/
         /**
-        * @todo FIXME: needs marshalling
+        * @todo FIXME
         */
 
 /*
@@ -477,7 +417,9 @@ export class BackgroundGeolocationFbs extends Common {
   /**
   * return current configuration
   *
-  * Returns the current configuration as a plain javascript object.
+  * Returns the current configuration as a plain javascript object that has the same
+  * interface on Android and iOS. (The native objects returned by the underlying
+  * geolocation libraries are slightly different.)
   *
   * @return {Promise<any>}
   *
@@ -494,40 +436,43 @@ export class BackgroundGeolocationFbs extends Common {
 
         let nativeConfig = this.bgGeo.getConfig();
 
-        // I had been under the impression that the Android Runtime would automatically
-        // convert values from java to javascript, however that does not seem to work
-        // under all circumstances. 
-        //
-        // As of NativeScript 5.4, a symptom that indicates marshalling hasn't fully worked
-        // is that if you try to console.log() an object, properties get displayed as 
-        // empty objects where they should be primitive types. For example, if config.debug 
-        // is set to nativeConfig.isDebugging(), it will get displayed as {} when the entire
-        // config object is dumped via console.log(). Confusingly, however, if the value itself
-        // is dumped, i.e. console.log( "debugging is:", config.debug ) it will get correctly 
-        // displayed.
-        //
-        // Explicitly converting the values to their javascript equivalents seems to work around
-        // this issue.
-        //
-        // FIXME: is this an example of a NativeScript runtime bug? 
+        console.log( "BackgroundGeolocationFbs::getConfig(): native configuration retrieved." );
 
         config.locationProvider = nativeConfig.locationProvider;
         config.desiredAccuracy = nativeConfig.desiredAccuracy;
         config.stationaryRadius = nativeConfig.stationaryRadius;
 
-        config.debug = nativeConfig._debug;
+        if ( nativeConfig._debug == 0 ) {
+          config.debug = false;
+        } else {
+          config.debug = true;
+        }
 
         config.distanceFilter = nativeConfig.distanceFilter;
 
-        config.stopOnTerminate = nativeConfig._stopOnTerminate;
+        if ( nativeConfig._stopOnTerminate == 0 ) {
+          config.stopOnTerminate = false;
+        } else {
+          config.stopOnTerminate = true;
+        }
 
         config.activitiesInterval = nativeConfig.activitiesInterval;
 
         // iOS settings not used on Android side of things. 
 
         config.activityType = nativeConfig.activityType;
-        config.pauseLocationUpdates = nativeConfig._pauseLocationUpdates;
-        config.saveBatteryOnBackground = nativeConfig._saveBatteryOnBackground;
+
+        if ( nativeConfig._pauseLocationUpdates == 0 ) {
+          config.pauseLocationUpdates = false;
+        } else {
+          config.pauseLocationUpdates = true;
+        }
+
+        if ( nativeConfig._saveBatteryOnBackground == 0 ) {
+          config.saveBatteryOnBackground = false;
+        } else { 
+          config.saveBatteryOnBackground = true;
+        }
 
         config.url = nativeConfig.url;
         config.syncUrl = nativeConfig.syncUrl;
@@ -538,7 +483,14 @@ export class BackgroundGeolocationFbs extends Common {
 
         config.postTemplate = nativeConfig._template;
 
-        // console.log( "BackgroundGeolocationFbs::getConfig(): after converting config:", config );
+        // Android Only (added so the shared config page doesn't error out)
+ 
+        config.stopOnStillActivity = false;
+        config.startOnBoot = false;
+        config.startForeground = false;
+        config.notificationsEnabled = false;
+
+        console.log( "BackgroundGeolocationFbs::getConfig(): after converting config:", config );
 
         resolve( config );
 
@@ -618,13 +570,11 @@ export class BackgroundGeolocationFbs extends Common {
 
         console.log( "BackgroundGeolocationFbs::getCurrentLocation(): timeout '" + timeout + "' maxAge '" + maxAge + "' enableHighAccuracy '" + enableHighAccuracy + "'" );
 
-let location : any;
+        let nativeLocation: MAURLocation = this.bgGeo.getCurrentLocationMaximumAgeEnableHighAccuracyError( timeout, maxAge, enableHighAccuracy );
 
-        // let location = this.bgGeo.getCurrentLocation( timeout, maxAge, enableHighAccuracy );
+        console.log( "BackgroundGeolocationFbs::getCurrentLocation(): got native location from plugin:", nativeLocation );
 
-        console.log( "BackgroundGeolocationFbs::getCurrentLocation(): got location from plugin:", location );
-
-        resolve( this.convertLocation( location ) );
+        resolve( this.convertLocation( nativeLocation ) );
 
       } catch( error ) {
         reject( error );
@@ -648,15 +598,15 @@ let location : any;
 
       try {
 
-        status.isRunning = this.bgGeo.isStarted;
+        status.isRunning = this.bgGeo.isStarted();
 
-/*
-        status.hasPermissions = this.bgGeo.hasPermissions(); //@Deprecated
+        // deprecated apparently
+
+        status.hasPermissions = 'not supported';
 
         status.locationServicesEnabled = this.bgGeo.locationServicesEnabled();
-        status.authorization = this.bgGeo.getAuthorizationStatus();
+        status.authorization = this.bgGeo.authorizationStatus();
 
-*/
         resolve( status );
 
       } catch ( error ) {
@@ -671,7 +621,6 @@ let location : any;
   * display the settings view
   *
   * This enables the user to change app location permissions.
-  * 
   */
 
   showAppSettings() {
@@ -686,6 +635,10 @@ let location : any;
 
   /**
   * show location settings
+  *
+  * @deprecated 
+  *
+  * @link https://github.com/mauron85/cordova-plugin-background-geolocation/issues/394
   */
 
   showLocationSettings() {
@@ -700,39 +653,31 @@ let location : any;
   * get stored locations
   *
   * @return {Promise<Location[]>}
+  *
+  * @todo remove converting to javascript array
   */
 
-  getLocations() {
+  getLocations() : Promise<Location[]> {
 
-    let locationsCollection : any = {};
-    let rawLocations : any;
-    let locations : any = [];
+    let nativeLocations : NSArray<MAURLocation>;
+
+    let locations : Location[] = [];
 
     return new Promise( ( resolve, reject ) => {
 
       try {
 
-        // this returns a java.util.Collection
+        nativeLocations = this.bgGeo.getLocations();
 
-        locationsCollection = this.bgGeo.getLocations();
+        console.log( "BackgroundGeolocationFbs::getLocations(): length of array:", nativeLocations.count );
 
-/*
+        let numLocations : any = nativeLocations.count;
 
-        rawLocations = locationsCollection.toArray();
+        for ( let i = 0; i < numLocations; i++ ) {
 
-        console.log( "BackgroundGeolocationFbs::getLocations(): toArray() length is:", rawLocations.length );
-
-        for ( let i = 0; i < rawLocations.length; i++ ) {
-
-          // individual location objects are of type BackgroundLocation which we convert to a org.json.JSONObject 
-          // which is then converted to simple Javascript/Typescript object. 
-          //
-          // FIXME: check to see if we can bypass converting to a JSONObject here. 
-
-          locations.push( this.convertLocation( rawLocations[ i ] ));
+          locations.push( this.convertLocation( nativeLocations[ i ] ));
 
         }
-*/
 
         resolve( locations );
 
@@ -752,13 +697,25 @@ let location : any;
 
   getValidLocations() {
 
-    let locations : any = {};
+    let nativeLocations : NSArray<MAURLocation>;
+
+    let locations : Location[] = [];
 
     return new Promise( ( resolve, reject ) => {
 
       try {
 
-        locations = this.bgGeo.getValidLocations();
+        nativeLocations = this.bgGeo.getValidLocations();
+
+        console.log( "BackgroundGeolocationFbs::getValidLocations(): length of array:", nativeLocations.count );
+
+        let numLocations : any = nativeLocations.count;
+
+        for ( let i = 0; i < numLocations; i++ ) {
+
+          locations.push( this.convertLocation( nativeLocations[ i ] ));
+
+        }
 
         resolve( locations );
 
@@ -784,7 +741,7 @@ let location : any;
 
       try {
 
-     //   this.bgGeo.deleteLocation( locationId );
+        this.bgGeo.deleteLocationError( locationId );
 
         resolve( true );
 
@@ -810,7 +767,9 @@ let location : any;
 
       try {
 
-        this.bgGeo.deleteAllLocations();
+        let retval = this.bgGeo.deleteAllLocations();
+ 
+        console.log( "BackgroundGeolocationFbs::deleteAllLocations(): retval is:", retval );
 
         resolve( true );
 
@@ -915,20 +874,7 @@ let location : any;
         // FIXME: Under Android 9+, destroy() doesn't seem to destroy the app completely
         // if geolocation is running. So we make sure it's stopped here.
 
-        this.stop().then( () => {
-
-          // FIXME: This is a hack to work around an Android 9 issue where the app does not
-          // die completely. 
-
-          setTimeout( () => {
-
-            console.log( "BackgroundGeolocationFbs::destory(): after timeout calling destroy" );
-
-  //          this.bgGeo.destroy();
-            resolve( true );
-          }, 1500 );
-
-        });
+        this.stop();
 
       } catch( error ) {
         reject( error );
@@ -945,64 +891,58 @@ let location : any;
   *
   * @return {Promise<LogEntry[]>}
   *
-  * @link https://stackoverflow.com/questions/3293946/the-easiest-way-to-transform-collection-to-array
-  *
-  * @todo the java getLogEntries() method is whacked in that the offset is actually the id of the oldest message.
+  * @link https://developer.apple.com/documentation/foundation/nsdictionary
   */
 
   getLogEntries( limit : number, offset: number, minLevel : string ) : Promise<any> {
 
-    let rawLogEntries : any = [];
-    let logEntries : any = [];
-
-    let logEntry : any;
+    let nativeLogEntries : NSArray<any>;
+    let logEntries : Array<any> = [];
 
     return new Promise( ( resolve, reject ) => {
 
       try {
 
-        // note that getLogEntries() returns a java.util.Collection, not an array.
-
         console.log( "BackgroundGeolocationFbs::getLogEntries(): attempting to get '" + limit + "' entries from offset '" + offset + "'." );
 
-let rawLogEntriesCollection : any;
+        nativeLogEntries = this.bgGeo.getLogEntriesFromLogEntryIdMinLogLevelFromString( limit, offset, minLevel );
 
-//        let rawLogEntriesCollection : any = this.bgGeo.getLogEntries( limit, offset, minLevel );
+        console.log( "BackgroundGeolocationFbs::getLogEntries(): length of array:", nativeLogEntries.count );
+        console.log( "BackgroundGeolocationFbs::getLogEntries(): first entry:", nativeLogEntries[0] );
 
-/*
-        // this returns a java array. Apparently .foreach() cannot be used with this array.
+        let numEntries : any = nativeLogEntries.count;
 
-        rawLogEntries = rawLogEntriesCollection.toArray();
+        for ( let i = 0; i < numEntries; i++ ) {
 
-        console.log( "BackgroundGeolocationFbs::getLogEntries(): rawLogEntries toArray() length is:", rawLogEntries.length );
+          // this is an NSDictionary
 
-        for ( let i = 0; i < rawLogEntries.length; i++ ) {
+          let entry = nativeLogEntries[i];
 
-          // this is a com.marianhello.logging.LogEntry object. 
+          console.log( "BackgroundGeolocationFbs::getLogEntries(): native entry is:", entry.objectForKey( 'id' ) );
 
-          let entry = rawLogEntries[i];
-
-          logEntry = {
-            id: entry.getId().intValue(),
-            context: entry.getContext().intValue(),
-            level: entry.getLevel(),
-            message: entry.getMessage(),
-            timestamp: entry.getTimestamp().longValue(),
-            loggerName: entry.getLoggerName(),
-            stackTrace : entry.getStackTrace()
+          let logEntry = {
+            id: entry.objectForKey( 'id'),
+            context: entry.objectForKey( 'context' ),
+            level: entry.objectForKey( 'level' ),
+            message: entry.objectForKey( 'message' ),
+            timestamp: entry.objectForKey( 'timestamp' ),
           };
+
+          console.log( "BackgroundGeolocationFbs::getLogEntries(): pushing:", logEntry );
 
           logEntries.push( logEntry );
 
         }
-*/
+
+        console.log( "BackgroundGeolocationFbs::getLogEntries(): got entries:", logEntries );
 
         resolve( logEntries );
 
-      } catch( error ) {
+      } catch ( error ) {
         reject( error );
       }
     });
+
   }
 
   // ---------------------------------------------------------
@@ -1018,10 +958,7 @@ let rawLogEntriesCollection : any;
 
   convertLocation( bgLocation: MAURLocation ) {
 
-    // FIXME: Previously, I was unnecessarily converting the BackgroundLocation objects to org.json.JSON objects
-    // which, when dumped via console.log(), would cause the app to crash after a several thousand interations.
-    //
-    // console.log( "BackgroundGeolocationFbs::convertLocation(): got background location:", bgLocation );
+    console.log( "BackgroundGeolocationFbs::convertLocation(): got background location:", bgLocation.locationId );
 
     let location : Location = new Location();
 
@@ -1031,15 +968,13 @@ let rawLogEntriesCollection : any;
       location.id = bgLocation.locationId;
     } 
 
-    console.log( "BackgroundGeolocationFbs::convertLocation(): after id." );
-
     if ( bgLocation.locationProvider !== null ) {
       location.locationProvider = bgLocation.locationProvider;
     } 
 
     location.provider = bgLocation.provider;
 
-    // location.time = bgLocation.time.timeIntervalSince1970;
+    location.time = bgLocation.time.getTime();
 
     location.latitude = bgLocation.latitude;
     location.longitude = bgLocation.longitude;
@@ -1052,7 +987,7 @@ let rawLogEntriesCollection : any;
 
     location.bearing = bgLocation.heading;
 
-    console.log( "BackgroundGeolocationFbs::convertLocation(): location is:", location );
+    // console.log( "BackgroundGeolocationFbs::convertLocation(): location is:", location );
 
     return location;
 
