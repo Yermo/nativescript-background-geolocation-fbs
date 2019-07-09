@@ -7,9 +7,15 @@ API relies heavily on promises instead of the callback structure used by the cor
 
 The majority of this documentation comes from the cordova plugin repository managed by @mauron85.
 
+## Heap Errors
+
+If you get javascript out of heap errors do when trying to build this use:
+
+export NODE_OPTIONS=--max-old-space-size=4096
+
 ## Running the demo on Android
 
-I've put together a demo using NativeScript + Angular in ./ngdemo that loads the plugin and displays the raw data of
+I've put together a demo using NativeScript + Angular in ./demo-angular that loads the plugin and displays the raw data of
 the current location.
 
 You must have NativeScript installed and the 'tns' command must be in your path.
@@ -19,7 +25,7 @@ To run it on Android in an emulator:
 ```
 cd src
 npm install
-npm run ngdemo.android
+npm run demo-angular.android
 ```
 
 The emulator supports simulating GPS locations. Open up the Extended Controls screen
@@ -45,14 +51,27 @@ the 'adb' command must be in your path.
 - open the lockito app 
 - press start in the lockito app
 - cd src; npm run build
-- cd ../ngdemo
+- cd ../demo-angular
 - tns run android
 - press the 'START' button in the ngdemo app
 - in another terminal window run ./etc/fake_gps.sh
 
 You should see the location data update.
 
-*** iOS support is currently not implemented but I will get to that soon. ***
+*** If you do not see location updates check the Settings Page. Under Android the default intervals 
+are too long so you can reduce them. You can also try the RAW LOCATION PROVIDER ***
+
+## Running the demo on iOS
+
+Make sure to have Nativescript installed. 
+
+```
+cd src
+npm run plugin.prepare
+npm run demo-angular.ios
+```
+
+The iOS simulator supports simulating location data. Go to Debug->Location->Freeway Drive for example.
 
 ## Submitting issues
 

@@ -6,30 +6,29 @@
   <ScrollView height="100%">
     <StackLayout class="p-5">
 
-    <Label class="list-separator"></Label>
+      <Label text="Location Provider:" class="m-t-5 h3"></Label>
 
-    <GridLayout rows="auto,auto,auto,auto,auto,auto,auto,auto,auto,auto, auto,auto,auto,auto,auto,auto,auto,auto,auto,auto, auto,auto,auto,auto,auto,auto,auto,auto,auto,auto, auto,auto,auto,auto,auto,auto,auto,auto,auto,auto, auto,auto,auto,auto,auto,auto,auto,auto,auto,auto, auto,auto,auto,auto,auto,auto,auto,auto,auto,auto, auto,auto,auto,auto,auto,auto,auto,auto,auto,auto, auto,auto,auto,auto,auto,auto,auto,auto,auto,auto" 
-      columns="auto,auto,*" height="100%" width="100%">
+      <StackLayout orientation="horizontal">
+        <Label class="m-t-5 m-l-10"
+          editable="false" [text]="config.locationProvider" (tap)="onLocationProviderTap()"></Label>
+        <Label class="m-t-5 m-l-10 fa" editable="false" text="&#xf107;" (tap)="onLocationProviderTap()"></Label>
+      </StackLayout>
 
-      <Label row="0" col="0" text="Location Provider:" class="m-t-5 h3"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="1" col="0" class="m-t-5 m-l-10"
-        editable="false" [text]="config.locationProvider" (tap)="onLocationProviderTap()"></Label>
-      <Label row="1" col="1" class="m-t-5 m-l-10 fa" editable="false" text="&#xf107;" (tap)="onLocationProviderTap()"></Label>
+      <Label text="Desired Accuracy:" class="m-t-5 h3"></Label>
 
-      <Label row="2" col="0" colSpan="3" class="list-separator"></Label>
+      <StackLayout orientation="horizontal">
+        <Label hint="MEDIUM_ACCURACY" class="m-t-5 m-l-10"
+          editable="false" [text]="config.desiredAccuracy" (tap)="onDesiredAccuracyTap()"></Label>
+        <Label class="m-t-5 m-l-10 fa" editable="false" text="&#xf107;" (tap)="onDesiredAccuracyTap()"></Label>
+      </StackLayout>
 
-      <Label row="3" col="0" text="Desired Accuracy:" class="m-t-5 h3"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="4" col="0" hint="MEDIUM_ACCURACY" class="m-t-5 m-l-10"
-        editable="false" [text]="config.desiredAccuracy" (tap)="onDesiredAccuracyTap()"></Label>
-      <Label row="4" col="1" class="m-t-5 m-l-10 fa" editable="false" text="&#xf107;" (tap)="onDesiredAccuracyTap()"></Label>
-
-      <Label row="5" col="0" colSpan="3" class="list-separator"></Label>
-
-      <Label row="6" col="0" text="Stationary Radius:" class="m-t-5 h3"></Label>
-
-      <TextField row="7" col="0" 
+      <Label text="Stationary Radius:" class="m-t-5 h3"></Label>
+      
+      <TextField 
         keyboardtype="number"
         returnKeyType="done"
         [text]="config.stationaryRadius" 
@@ -39,16 +38,16 @@
         maxLength="10"
         class=" m-l-10 scf-input"></TextField>
 
-      <Label row="8" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="9" col="0" text="Debug Sounds:" class="m-t-5 h3"></Label>
-      <Switch row="10" col="0" checked="{{config.debug}}" (checkedChange)="onDebugCheckedChange($event)" class="m-t-5 m-l-10"></Switch>
+      <Label text="Debug Sounds:" class="m-t-5 h3"></Label>
+      <Switch checked="{{config.debug}}" (checkedChange)="onDebugCheckedChange($event)" class="m-t-5 m-l-10"></Switch>
 
-      <Label row="12" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="13" col="0" text="Distance Filter:" class="m-t-5 h3"></Label>
+      <Label text="Distance Filter:" class="m-t-5 h3"></Label>
 
-      <TextField row="14" col="0" 
+      <TextField
         keyboardtype="number"
         returnKeyType="done"
         [text]="config.distanceFilter" 
@@ -58,21 +57,21 @@
         maxLength="10"
         class=" m-l-10 scf-input"></TextField>
 
-      <Label row="15" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="16" col="0" text="Stop on Terminate:" class="m-t-5 h3"></Label>
-      <Switch row="17" col="0" checked="{{config.stopOnTerminate}}" (checkedChange)="onStopOnTerminateChange($event)" class="m-t-5 m-l-10"></Switch>
+      <Label text="Stop on Terminate:" class="m-t-5 h3"></Label>
+      <Switch checked="{{config.stopOnTerminate}}" (checkedChange)="onStopOnTerminateChange($event)" class="m-t-5 m-l-10"></Switch>
 
-      <Label row="18" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="19" col="0" text="Start on Boot: (Android Only)" class="m-t-5 h3"></Label>
-      <Switch row="20" col="0" checked="{{config.startOnBoot}}" (checkedChange)="onStartOnBootChange($event)" class="m-t-5 m-l-10"></Switch>
+      <Label text="Start on Boot: (Android Only)" class="m-t-5 h3"></Label>
+      <Switch checked="{{config.startOnBoot}}" (checkedChange)="onStartOnBootChange($event)" class="m-t-5 m-l-10"></Switch>
 
-      <Label row="21" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="22" col="0" text="Interval: (Android Only)" class="m-t-5 h3"></Label>
+      <Label text="Interval: (Android Only)" class="m-t-5 h3"></Label>
 
-      <TextField row="23" col="0" 
+      <TextField
         keyboardtype="number"
         returnKeyType="done"
         [text]="config.interval" 
@@ -82,11 +81,11 @@
         maxLength="10"
         class=" m-l-10 scf-input"></TextField>
 
-      <Label row="24" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="25" col="0" text="Fastest Interval: (Android Only):" class="m-t-5 h3"></Label>
+      <Label text="Fastest Interval: (Android Only):" class="m-t-5 h3"></Label>
 
-      <TextField row="26" col="0" 
+      <TextField
         keyboardtype="number"
         returnKeyType="done"
         [text]="config.fastestInterval" 
@@ -96,11 +95,11 @@
         maxLength="10"
         class=" m-l-10 scf-input"></TextField>
 
-      <Label row="27" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="28" col="0" text="Activities Interval: (Android Only):" class="m-t-5 h3"></Label>
+      <Label text="Activities Interval: (Android Only):" class="m-t-5 h3"></Label>
 
-      <TextField row="29" col="0" 
+      <TextField 
         keyboardtype="number"
         returnKeyType="done"
         [text]="config.activitiesInterval" 
@@ -110,26 +109,26 @@
         maxLength="10"
         class=" m-l-10 scf-input"></TextField>
 
-      <Label row="30" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="31" col="0" text="Stop on Still Activity: (Android Only)" class="m-t-5 h3"></Label>
-      <Switch row="32" col="0" checked="{{config.stopOnStillActivity}}" (checkedChange)="onStopOnStillActivityChange($event)" class="m-t-5 m-l-10"></Switch>
+      <Label text="Stop on Still Activity: (Android Only)" class="m-t-5 h3"></Label>
+      <Switch checked="{{config.stopOnStillActivity}}" (checkedChange)="onStopOnStillActivityChange($event)" class="m-t-5 m-l-10"></Switch>
 
-      <Label row="33" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="34" col="0" text="Notifications Enabled: (Android Only)" class="m-t-5 h3"></Label>
-      <Switch row="35" col="0" checked="{{config.notificationsEnabled}}" (checkedChange)="onNotificationsEnabledChange($event)" class="m-t-5 m-l-10"></Switch>
+      <Label text="Notifications Enabled: (Android Only)" class="m-t-5 h3"></Label>
+      <Switch checked="{{config.notificationsEnabled}}" (checkedChange)="onNotificationsEnabledChange($event)" class="m-t-5 m-l-10"></Switch>
 
-      <Label row="36" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="37" col="0" text="Start Foreground: (Android Only)" class="m-t-5 h3"></Label>
-      <Switch row="38" col="0" checked="{{config.startForeground}}" (checkedChange)="onStartForegroundChange($event)" class="m-t-5 m-l-10"></Switch>
+      <Label text="Start Foreground: (Android Only)" class="m-t-5 h3"></Label>
+      <Switch checked="{{config.startForeground}}" (checkedChange)="onStartForegroundChange($event)" class="m-t-5 m-l-10"></Switch>
 
-      <Label row="39" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="40" col="0" text="Notification Title: (Android Only):" class="m-t-5 h3"></Label>
+      <Label text="Notification Title: (Android Only):" class="m-t-5 h3"></Label>
 
-      <TextField row="41" col="0" 
+      <TextField
         returnKeyType="done"
         [text]="config.notificationTitle" 
         (blur)="onNotificationTitle($event)"
@@ -138,11 +137,11 @@
         maxLength="10"
         class=" m-l-10 scf-input"></TextField>
 
-      <Label row="42" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="43" col="0" text="Notification Text: (Android Only):" class="m-t-5 h3"></Label>
+      <Label text="Notification Text: (Android Only):" class="m-t-5 h3"></Label>
 
-      <TextField row="44" col="0" 
+      <TextField
         returnKeyType="done"
         [text]="config.notificationText" 
         (blur)="onNotificationText($event)"
@@ -151,11 +150,11 @@
         maxLength="10"
         class=" m-l-10 scf-input"></TextField>
 
-      <Label row="45" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="46" col="0" text="Notification Icon Color: (Android Only):" class="m-t-5 h3"></Label>
+      <Label text="Notification Icon Color: (Android Only):" class="m-t-5 h3"></Label>
 
-      <TextField row="47" col="0" 
+      <TextField
         returnKeyType="done"
         [text]="config.notificationIconColor" 
         (blur)="onNotificationIconColor($event)"
@@ -164,11 +163,11 @@
         maxLength="10"
         class=" m-l-10 scf-input"></TextField>
 
-      <Label row="48" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="49" col="0" text="Notification Icon Large: (Android Only):" class="m-t-5 h3"></Label>
+      <Label text="Notification Icon Large: (Android Only):" class="m-t-5 h3"></Label>
 
-      <TextField row="50" col="0" 
+      <TextField 
         returnKeyType="done"
         [text]="config.notificationIconLarge" 
         (blur)="onNotificationIconLarge($event)"
@@ -177,11 +176,11 @@
         maxLength="10"
         class=" m-l-10 scf-input"></TextField>
 
-      <Label row="51" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="52" col="0" text="Notification Icon Small: (Android Only):" class="m-t-5 h3"></Label>
+      <Label text="Notification Icon Small: (Android Only):" class="m-t-5 h3"></Label>
 
-      <TextField row="53" col="0" 
+      <TextField
         returnKeyType="done"
         [text]="config.notificationIconSmall" 
         (blur)="onNotificationIconSmall($event)"
@@ -190,27 +189,29 @@
         maxLength="10"
         class=" m-l-10 scf-input"></TextField>
 
-      <Label row="54" col="0" text="Activity Type (iOS Only):" class="m-t-5 h3"></Label>
+      <Label text="Activity Type (iOS Only):" class="m-t-5 h3"></Label>
 
-      <Label row="55" col="0" hint="OtherNavigation" class="m-t-5 m-l-10"
-        editable="false" [text]="config.activityType" (tap)="onActivityTypeTap()"></Label>
-      <Label row="55" col="1" class="m-t-5 m-l-10 fa" editable="false" text="&#xf107;" (tap)="onActivityTypeTap()"></Label>
+      <StackLayout orientation="horizontal">
+        <Label hint="OtherNavigation" class="m-t-5 m-l-10"
+          editable="false" [text]="config.activityType" (tap)="onActivityTypeTap()"></Label>
+        <Label class="m-t-5 m-l-10 fa" editable="false" text="&#xf107;" (tap)="onActivityTypeTap()"></Label>
+      </StackLayout>
 
-      <Label row="56" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="57" col="0" text="Pause Location Updates: (iOS Only)" class="m-t-5 h3"></Label>
-      <Switch row="58" col="0" checked="{{config.pauseLocationUpdates}}" (checkedChange)="onPauseLocationUpdatesChange($event)" class="m-t-5 m-l-10"></Switch>
+      <Label text="Pause Location Updates: (iOS Only)" class="m-t-5 h3"></Label>
+      <Switch checked="{{config.pauseLocationUpdates}}" (checkedChange)="onPauseLocationUpdatesChange($event)" class="m-t-5 m-l-10"></Switch>
 
-      <Label row="59" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="60" col="0" text="Save Battery on Background: (iOS Only)" class="m-t-5 h3"></Label>
-      <Switch row="61" col="0" checked="{{config.saveBatteryOnBackground}}" (checkedChange)="onSaveBatteryOnBackgroundChange($event)" class="m-t-5 m-l-10"></Switch>
+      <Label text="Save Battery on Background: (iOS Only)" class="m-t-5 h3"></Label>
+      <Switch checked="{{config.saveBatteryOnBackground}}" (checkedChange)="onSaveBatteryOnBackgroundChange($event)" class="m-t-5 m-l-10"></Switch>
 
-      <Label row="62" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="63" col="0" text="Url:" class="m-t-5 h3"></Label>
+      <Label text="Url:" class="m-t-5 h3"></Label>
 
-      <TextField row="64" col="0" 
+      <TextField
         returnKeyType="done"
         [text]="config.url" 
         (blur)="onUrl($event)"
@@ -219,11 +220,11 @@
         maxLength="10"
         class=" m-l-10 scf-input"></TextField>
 
-      <Label row="65" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="66" col="0" text="Sync Url:" class="m-t-5 h3"></Label>
+      <Label text="Sync Url:" class="m-t-5 h3"></Label>
 
-      <TextField row="67" col="0" 
+      <TextField
         returnKeyType="done"
         [text]="config.syncUrl" 
         (blur)="onSyncUrl($event)"
@@ -232,11 +233,11 @@
         maxLength="10"
         class=" m-l-10 scf-input"></TextField>
 
-      <Label row="68" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="69" col="0" text="Sync Threshold:" class="m-t-5 h3"></Label>
+      <Label text="Sync Threshold:" class="m-t-5 h3"></Label>
 
-      <TextField row="70" col="0" 
+      <TextField
         keyboardtype="number"
         returnKeyType="done"
         [text]="config.syncThreshold" 
@@ -246,11 +247,11 @@
         maxLength="10"
         class=" m-l-10 scf-input"></TextField>
 
-      <Label row="71" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="72" col="0" text="Http Headers:" class="m-t-5 h3"></Label>
+      <Label text="Http Headers:" class="m-t-5 h3"></Label>
 
-      <TextField row="73" col="0" 
+      <TextField
         returnKeyType="done"
         [text]="config.httpHeaders" 
         (blur)="onHttpHeaders($event)"
@@ -259,11 +260,11 @@
         maxLength="10"
         class=" m-l-10 scf-input"></TextField>
 
-      <Label row="74" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="75" col="0" text="Max Locations:" class="m-t-5 h3"></Label>
+      <Label text="Max Locations:" class="m-t-5 h3"></Label>
 
-      <TextField row="76" col="0" 
+      <TextField
         keyboardtype="number"
         returnKeyType="done"
         [text]="config.maxLocations" 
@@ -273,11 +274,11 @@
         maxLength="10"
         class=" m-l-10 scf-input"></TextField>
 
-      <Label row="77" col="0" colSpan="3" class="list-separator"></Label>
+      <Label class="list-separator"></Label>
 
-      <Label row="78" col="0" text="Post Template:" class="m-t-5 h3"></Label>
+      <Label text="Post Template:" class="m-t-5 h3"></Label>
 
-      <TextField row="79" col="0" 
+      <TextField
         returnKeyType="done"
         [text]="config.postTemplate" 
         (blur)="onPostTemplate($event)"
@@ -286,7 +287,6 @@
         maxLength="10"
         class=" m-l-10 scf-input"></TextField>
 
-    </GridLayout>
     </StackLayout>
   </ScrollView>
 </StackLayout>

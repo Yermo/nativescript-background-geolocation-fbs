@@ -197,7 +197,7 @@ export class LocationsService {
         console.log( "LocationService:getConfig(): interval:",  config.interval );
         console.log( "LocationService:getConfig(): fastestInterval:", config.fastestInterval );
         console.log( "LocationService:getConfig(): activitiesInterval: ", config.activitiesInterval );
-        console.log( "LocationService:getConfig(): isDebugging:",  config.isDebugging );
+        console.log( "LocationService:getConfig(): debug:",  config.debug );
         console.log( "LocationService:getConfig(): stopOnTerminate:", config.stopOnTerminate );
         console.log( "LocationService:getConfig(): stopOnStillActivity:", config.stopOnStillActivity );
         console.log( "LocationService:getConfig(): startOnBoot:", config.startOnBoot );
@@ -401,6 +401,12 @@ export class LocationsService {
 
   /**
   * get stored locations
+  *
+  * NOTE: The background geolocation plugin does not delete locations. It just marks them as deleted.
+  * (This is brain dead and must be addressed.)
+  *
+  * As a result, we use the getValidLocations() method here which returns all locations that are not
+  * marked as having been deleted.
   */
 
   getLocations() {
