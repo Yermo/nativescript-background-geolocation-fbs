@@ -7,6 +7,7 @@
 import { 
   Component, 
   OnInit, 
+  AfterViewInit,
   OnDestroy, 
   Input,
   ChangeDetectionStrategy,
@@ -38,7 +39,7 @@ import { EventData } from "tns-core-modules/data/observable";
   templateUrl: "./settings-page.component.html",
   styleUrls: ['./settings-page.component.css'],
 })
-export class SettingsPageComponent implements OnInit {
+export class SettingsPageComponent implements OnInit, AfterViewInit {
 
   // config from the plugin
 
@@ -67,6 +68,10 @@ export class SettingsPageComponent implements OnInit {
     PASSIVE_ACCURACY: 10000
   };
   
+  // flag to work around change event being called when it should not be.
+
+  private initialized : boolean = false;
+
   constructor(
     private routerExtensions: RouterExtensions,
     private locationsService: LocationsService
@@ -129,6 +134,16 @@ export class SettingsPageComponent implements OnInit {
   */
 
   ngOnInit(): void {
+  }
+
+  // ----------------------------------------------------------
+
+  /**
+  * after view init
+  */
+
+  ngAfterViewInit(): void {
+    this.initialized = true;
   }
 
   // ----------------------------------------------------------
@@ -314,6 +329,14 @@ export class SettingsPageComponent implements OnInit {
   // -----------------------------------------------------
 
   onDebugCheckedChange(args: EventData) {
+
+    console.log( "SettingsPageComponent::onDebugCheckedChange(): top" );
+
+    if ( ! this.initialized ) {
+      console.log( "SettingsPageComponent::onDebugCheckedChange(): view not yet initialized. Ignoring." );
+      return;
+    }
+
     let debugSwitch = args.object as Switch;
     this.config.debug = Boolean( debugSwitch.checked ); // boolean
 
@@ -337,7 +360,20 @@ export class SettingsPageComponent implements OnInit {
 
   // -----------------------------------------------------
 
+  /**
+  *
+  * @todo Under iOS it seems that because the default setting is 'true' this event is * fired when the page first renders. 
+  */
+
   onStopOnTerminateChange(args: EventData) {
+
+    if ( ! this.initialized ) {
+      console.log( "SettingsPageComponent::onStopTerminateChange(): view not yet initialized. Ignoring." );
+      return;
+    }
+
+    console.log( "SettingsPageComponent::onStopOnTerminateChange(): top" );
+
     let stopSwitch = args.object as Switch;
     this.config.stopOnTerminate = Boolean( stopSwitch.checked ); // boolean
 
@@ -348,6 +384,14 @@ export class SettingsPageComponent implements OnInit {
   // -----------------------------------------------------
 
   onStartOnBootChange(args: EventData) {
+
+    console.log( "SettingsPageComponent::onStartOnBootChange(): top" );
+
+    if ( ! this.initialized ) {
+      console.log( "SettingsPageComponent::onStartOnBootChange(): view not yet initialized. Ignoring." );
+      return;
+    }
+
     let startSwitch = args.object as Switch;
     this.config.startOnBoot = startSwitch.checked; // boolean
 
@@ -400,6 +444,12 @@ export class SettingsPageComponent implements OnInit {
   // -----------------------------------------------------
 
   onStopOnStillActivityChange(args: EventData) {
+
+    if ( ! this.initialized ) {
+      console.log( "SettingsPageComponent::onStopOnStillActivityChange(): view not yet initialized. Ignoring." );
+      return;
+    }
+
     let stopSwitch = args.object as Switch;
     this.config.stopOnStillActivity = stopSwitch.checked; // boolean
 
@@ -410,6 +460,12 @@ export class SettingsPageComponent implements OnInit {
   // -----------------------------------------------------
 
   onNotificationsEnabledChange(args: EventData) {
+
+    if ( ! this.initialized ) {
+      console.log( "SettingsPageComponent::onNotificationsEnabledChange(): view not yet initialized. Ignoring." );
+      return;
+    }
+
     let switchElem = args.object as Switch;
     this.config.notificationsEnabled = switchElem.checked; // boolean
     this.locationsService.configure( { notificationsEnabled: this.config.notificationsEnabled } );
@@ -418,6 +474,12 @@ export class SettingsPageComponent implements OnInit {
   // -----------------------------------------------------
 
   onStartForegroundChange(args: EventData) {
+
+    if ( ! this.initialized ) {
+      console.log( "SettingsPageComponent::onStartForegroundChange(): view not yet initialized. Ignoring." );
+      return;
+    }
+
     let switchElem = args.object as Switch;
     this.config.startForeground = switchElem.checked; // boolean
 
@@ -532,6 +594,12 @@ export class SettingsPageComponent implements OnInit {
   // -----------------------------------------------------
 
   onPauseLocationUpdatesChange(args: EventData) {
+
+    if ( ! this.initialized ) {
+      console.log( "SettingsPageComponent::onPauseLocationUpdatesChange(): view not yet initialized. Ignoring." );
+      return;
+    }
+
     let switchElem = args.object as Switch;
     this.config.pauseLocationUpdates = switchElem.checked; // boolean
     this.locationsService.configure( { pauseLocationUpdates: this.config.pauseLocationUpdates } );
@@ -541,6 +609,12 @@ export class SettingsPageComponent implements OnInit {
   // -----------------------------------------------------
 
   onSaveBatteryOnBackgroundChange(args: EventData) {
+
+    if ( ! this.initialized ) {
+      console.log( "SettingsPageComponent::onSaveBatteryOnBackgroundChange(): view not yet initialized. Ignoring." );
+      return;
+    }
+
     let switchElem = args.object as Switch;
     this.config.saveBatteryOnBackground = switchElem.checked; // boolean
     this.locationsService.configure( { saveBatteryOnBackground: this.config.saveBatteryOnBackground } );
@@ -635,7 +709,7 @@ export class SettingsPageComponent implements OnInit {
 
   // -----------------------------------------------------
 
-  public cancel() {
+  public back() {
     this.routerExtensions.backToPreviousPage();
   }
 

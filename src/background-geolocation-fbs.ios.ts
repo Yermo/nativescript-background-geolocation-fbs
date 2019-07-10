@@ -324,9 +324,9 @@ export class BackgroundGeolocationFbs extends Common {
 
       try {
 
-        let configInstance : MAURConfig = MAURConfig.alloc().init();
-
-        configInstance = configInstance.initWithDefaults();
+        // this should return the default configuration the first time.
+      
+        let configInstance : MAURConfig = this.bgGeo.getConfig();
 
         console.log( "BackgroundGeolocationFbs::configure(): configInstancee:", configInstance );
         console.log( "BackgroundGeolocationFbs::configure(): this.bgGeo:", this.bgGeo );
@@ -344,10 +344,12 @@ export class BackgroundGeolocationFbs extends Common {
           configInstance.stationaryRadius = config.stationaryRadius;
         }
 
-        if (( typeof config.debug != 'undefined' ) && ( config.debug )) {
-          configInstance._debug = 1;
-        } else {
-          configInstance._debug = 0;
+        if ( typeof config.debug != 'undefined' ) {
+          if ( config.debug ) {
+            configInstance._debug = 1;
+          } else {
+            configInstance._debug = 0;
+          }
         }
 
         if ( typeof config.distanceFilter != 'undefined' ) {
@@ -355,7 +357,11 @@ export class BackgroundGeolocationFbs extends Common {
         }
 
         if ( typeof config.stopOnTerminate != 'undefined' ) {
-          configInstance._stopOnTerminate = config.stopOnTerminate;
+          if ( config.stopOnTerminate ) {
+            configInstance._stopOnTerminate = 1;
+          } else {
+            configInstance._stopOnTerminate = 0;
+          }
         }
 
         if ( typeof config.activitiesInterval != 'undefined' ) {
@@ -372,6 +378,22 @@ export class BackgroundGeolocationFbs extends Common {
 
         if ( typeof config.syncThreshold != 'undefined' ) {
           configInstance.syncThreshold = config.syncThreshold;
+        }
+
+        if ( typeof config.pauseLocationUpdates != 'undefined' ) {
+          if ( config.pauseLocationUpdates ) {
+            configInstance._pauseLocationUpdates = 1;
+          } else {
+            configInstance._pauseLocationUpdates = 0;
+          }
+        }
+
+        if ( typeof config.saveBatteryOnBackground != 'undefined' ) {
+          if ( config.saveBatteryOnBackground ) {
+            configInstance._saveBatteryOnBackground = 1;
+          } else {
+            configInstance._saveBatteryOnBackground = 0;
+          }
         }
 
         /**

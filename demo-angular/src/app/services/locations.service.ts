@@ -149,7 +149,7 @@ export class LocationsService {
 
     return new Promise( ( resolve, reject ) => {
 
-      console.log( "LocationService::configure(): configuring background geolocation plugin." );
+      console.log( "LocationService::configure(): configuring background geolocation plugin with configuration:", config );
 
       this.bgGeo.configure( config ).then( async () => {
 

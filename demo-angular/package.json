@@ -1,11 +1,11 @@
 {
   "nativescript": {
     "id": "com.flyingbricksoftware.bgldemoangular",
-    "tns-android": {
-      "version": "5.4.0"
-    },
     "tns-ios": {
       "version": "5.4.2"
+    },
+    "tns-android": {
+      "version": "5.4.0"
     }
   },
   "description": "Angular Demo of Background Geolocation Plugin for NativeScript",
