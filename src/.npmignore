@@ -5,5 +5,6 @@ tsconfig.json
 scripts/*
 platforms/android/*
 !platforms/android/include.gradle
+!platforms/android/libs
 !platforms/android/*.aar
 !platforms/android/*.jar
