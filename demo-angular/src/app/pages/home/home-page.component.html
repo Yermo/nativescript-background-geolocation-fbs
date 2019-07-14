@@ -25,6 +25,7 @@
       </WrapLayout>
 
       <WrapLayout>
+        <Button text="Number of Locations" (tap)="numLocations()" [isEnabled]="locationsService.isConfigured" class="button" [class.button-primary]="locationsService.isConfigured"></Button>
         <Button text="Status" (tap)="status()" [isEnabled]="locationsService.isConfigured" class="button" [class.button-primary]="locationsService.isConfigured"></Button>
         <Button text="Debug Log" (tap)="debuglog()" [isEnabled]="locationsService.isConfigured" class="button" [class.button-primary]="locationsService.isConfigured"></Button>
       </WrapLayout>

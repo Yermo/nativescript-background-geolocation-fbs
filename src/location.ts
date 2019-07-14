@@ -20,7 +20,7 @@ export class Location {
 
   // UTC time of this fix, in milliseconds since January 1, 1970. 
 
-  time:number;
+  timestamp:number;
 
   // Latitude, in degrees.
  

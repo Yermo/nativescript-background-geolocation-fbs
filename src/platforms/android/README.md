@@ -1,3 +1,16 @@
+# Modifying background-geolocation-android
+
+If changes need to be made to the background-geolocation-android library:
+
+- make sure to save and rebuild the project
+- copy the build/outputs/aar library files to ./libs
+- in the src directory run npm run clean
+- then run npm run plugin.prepare
+- then you can run the demo and the changes made to the library should be visible. 
+
+I need to explore the details of npm run plugin.prepare. I /think/ if that step is not done 
+the updated library file is not copied but I have not verified that yet. 
+
 # External Libraries
 
 It tooks some trial and error but it looks like all that's needed to include an external *.aar file is to copy it into

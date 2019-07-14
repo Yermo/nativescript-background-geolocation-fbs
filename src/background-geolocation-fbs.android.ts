@@ -6,6 +6,7 @@
 
 import { Common } from './background-geolocation-fbs.common';
 import { Location } from './location';
+import { BackgroundGeolocationConfig, LocationProviderTypes, AccuracyTypes, ActivityTypes  } from './config';
 import { LogEntry } from './logentry';
 
 import * as utils from 'tns-core-modules/utils/utils';
@@ -311,7 +312,7 @@ export class BackgroundGeolocationFbs extends Common {
   * @todo finish httpHeaders and postTemplate
   */
 
-  configure( config ) {
+  configure( config : BackgroundGeolocationConfig ) {
 
     return new Promise( ( resolve, reject ) => {
 
@@ -379,12 +380,12 @@ export class BackgroundGeolocationFbs extends Common {
           configInstance.setNotificationsEnabled( new java.lang.Boolean( config.notificationsEnabled ));
         }
 
-        if ( typeof config.setStartForeground != 'undefined' ) {
-          configInstance.setStartForeground( new java.lang.Boolean( config.setStartForeground ) );
+        if ( typeof config.startForeground != 'undefined' ) {
+          configInstance.setStartForeground( new java.lang.Boolean( config.startForeground ) );
         }
 
-        if ( typeof config.setNotificationTitle != 'undefined' ) {
-          configInstance.setNotificationTitle( config.setNotificationTitle );
+        if ( typeof config.notificationTitle != 'undefined' ) {
+          configInstance.setNotificationTitle( config.notificationTitle );
         }
 
         if ( typeof config.notificationText != 'undefined' ) {
@@ -461,7 +462,7 @@ export class BackgroundGeolocationFbs extends Common {
   * @link https://docs.nativescript.org/core-concepts/android-runtime/marshalling/java-to-js
   */
 
-  getConfig() {
+  getConfig() : Promise<BackgroundGeolocationConfig> {
 
     return new Promise( ( resolve, reject ) => {
 
@@ -599,7 +600,7 @@ export class BackgroundGeolocationFbs extends Common {
   * @return {Promise<Location>}
   */
 
-  getCurrentLocation( timeout : number, maxAge : number, enableHighAccuracy : boolean ) {
+  getCurrentLocation( timeout : number, maxAge : number, enableHighAccuracy : boolean ) : Promise<Location> {
 
     return new Promise( ( resolve, reject ) => {
 
@@ -749,6 +750,36 @@ export class BackgroundGeolocationFbs extends Common {
         locations = this.bgGeo.getValidLocations();
 
         resolve( locations );
+
+      } catch ( error ) {
+        reject( error );
+      }
+    });
+  }
+
+  // -------------------------------------------------------------
+
+  /**
+  * get count of stored locations
+  *
+  * @return {Promise<number>}
+  */
+
+  getNumLocations() : Promise<number> {
+
+    let numLocations : number = 0;
+
+    return new Promise( ( resolve, reject ) => {
+
+      try {
+
+        // this returns a long
+
+        numLocations = this.bgGeo.getNumLocations();
+
+        console.log( "BackgroundGeolocationFbs::getNumLocations(): numLocations is:", numLocations );
+
+        resolve( numLocations );
 
       } catch ( error ) {
         reject( error );
@@ -1040,8 +1071,6 @@ export class BackgroundGeolocationFbs extends Common {
       location.id = bgLocation.getLocationId().longValue();
     } 
 
-    console.log( "BackgroundGeolocationFbs::convertLocation(): after id." );
-
     // locations returned by getCurrentLocation() do not contain the locationProvider, apparently.
 
     if ( bgLocation.getLocationProvider() !== null ) {
@@ -1053,7 +1082,7 @@ export class BackgroundGeolocationFbs extends Common {
     // FIXME: For these values longValue(), intValue(), doubleValue(), and floatValue() are not 
     // defined and I do not understand why.
 
-    location.time = bgLocation.getTime();
+    location.timestamp = bgLocation.getTime();
 
     location.latitude = bgLocation.getLatitude();
     location.longitude = bgLocation.getLongitude();
@@ -1070,7 +1099,7 @@ export class BackgroundGeolocationFbs extends Common {
 
     location.mockLocationsEnabled = Boolean( bgLocation.areMockLocationsEnabled() );
 
-    console.log( "BackgroundGeolocationFbs::convertLocation(): location is:", location );
+    // console.log( "BackgroundGeolocationFbs::convertLocation(): location is:", location );
 
     return location;
 

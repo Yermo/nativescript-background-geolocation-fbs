@@ -13,7 +13,7 @@ import {
   on as applicationOn 
 } from "tns-core-modules/application";
 
-import { LogEntry, Location, BackgroundGeolocationFbs } from "nativescript-background-geolocation-fbs";
+import { BackgroundGeolocationFbs, BackgroundGeolocationConfig, LogEntry, Location } from "nativescript-background-geolocation-fbs";
 
 import { Subject } from 'rxjs/Subject';
 
@@ -107,16 +107,16 @@ export class LocationsService {
   * @todo figure out why dumping the config object in a console.log() message is not displaying the properties correctly. NativeScript 5.4 bug?
   */
 
-  configure( config?: any ) : Promise<any> {
+  configure( config?: BackgroundGeolocationConfig ) : Promise<any> {
 
     if ( typeof config == 'undefined' ) {
-      config = {};
+      config  = {};
     }
 
     /*
     * Left here for Reference
 
-    let config = {
+    let config : BackgroundGeolocationConfig = {
       locationProvider: BackgroundGeolocationFbs.DISTANCE_FILTER_PROVIDER,
       desiredAccuracy: BackgroundGeolocationFbs.HIGH_ACCURACY,
       stationaryRadius: 25.0,
@@ -401,12 +401,6 @@ export class LocationsService {
 
   /**
   * get stored locations
-  *
-  * NOTE: The background geolocation plugin does not delete locations. It just marks them as deleted.
-  * (This is brain dead and must be addressed.)
-  *
-  * As a result, we use the getValidLocations() method here which returns all locations that are not
-  * marked as having been deleted.
   */
 
   getLocations() {
@@ -436,6 +430,18 @@ export class LocationsService {
   getCurrentLocation() {
 
     return this.bgGeo.getCurrentLocation( 30000, 60000, false );
+
+  }
+
+  // ----------------------------------------------------
+
+  /**
+  * get number of locations stored in the cache.
+  */
+
+  getNumLocations() : Promise<number> {
+
+    return this.bgGeo.getNumLocations();
 
   }
 

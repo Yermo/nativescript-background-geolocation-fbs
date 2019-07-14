@@ -298,6 +298,38 @@ export class HomePageComponent implements OnInit {
   // ---------------------------------------------------------
 
   /**
+  * Get the number of locations stored in the cache
+  */
+
+  numLocations() {
+
+    console.log( "HomePageComponent::numLocations():" );
+
+    this.locationsService.getNumLocations().then( ( numLocations ) => {
+
+      let msg = 'Number of Stored Locations: ' + numLocations;
+
+      dialogs.alert({
+        title: "Number of Locations",
+        message: msg,
+        okButtonText: "OK",
+       });
+
+     }).catch( ( error ) => {
+  
+      dialogs.alert({
+        title: "BGgeo getNumLocations Error",
+        message: error.toString(),
+        okButtonText: "OK",
+       });
+
+     });
+
+  }
+
+  // ---------------------------------------------------------
+
+  /**
   * Check status
   */
 

@@ -6,6 +6,8 @@ export * from './location';
 
 export * from './logentry';
 
+export * from './config';
+
 /*
 export declare class BackgroundGeolocationFbs extends Common {
   // define your typings manually

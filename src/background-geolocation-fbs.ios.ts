@@ -7,6 +7,7 @@
 import { Common } from './background-geolocation-fbs.common';
 import { Location } from './location';
 import { LogEntry } from './logentry';
+import { BackgroundGeolocationConfig, LocationProviderTypes, AccuracyTypes, ActivityTypes  } from './config';
 
 import * as utils from 'tns-core-modules/utils/utils';
 import * as app from "tns-core-modules/application";
@@ -318,7 +319,7 @@ export class BackgroundGeolocationFbs extends Common {
   * @todo finish httpHeaders and postTemplate
   */
 
-  configure( config ) {
+  configure( config : BackgroundGeolocationConfig ) {
 
     return new Promise( ( resolve, reject ) => {
 
@@ -443,12 +444,12 @@ export class BackgroundGeolocationFbs extends Common {
   * interface on Android and iOS. (The native objects returned by the underlying
   * geolocation libraries are slightly different.)
   *
-  * @return {Promise<any>}
+  * @return {Promise<BackgroundGeolocationConfig>}
   *
   * @link https://docs.nativescript.org/core-concepts/android-runtime/marshalling/java-to-js
   */
 
-  getConfig() {
+  getConfig() : Promise<BackgroundGeolocationConfig> {
 
     return new Promise( ( resolve, reject ) => {
 
@@ -996,7 +997,7 @@ export class BackgroundGeolocationFbs extends Common {
 
     location.provider = bgLocation.provider;
 
-    location.time = bgLocation.time.getTime();
+    location.timestamp = bgLocation.time.getTime();
 
     location.latitude = bgLocation.latitude;
     location.longitude = bgLocation.longitude;
