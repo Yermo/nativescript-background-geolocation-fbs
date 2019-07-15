@@ -6,13 +6,20 @@
 
 import { Common } from './background-geolocation-fbs.common';
 import { Location } from './location';
-import { BackgroundGeolocationConfig, LocationProviderTypes, AccuracyTypes, ActivityTypes  } from './config';
+import { BackgroundGeolocationConfig } from './config';
 import { LogEntry } from './logentry';
 
 import * as utils from 'tns-core-modules/utils/utils';
 import * as app from "tns-core-modules/application";
 
 declare const com, java: any;
+
+// FIXME: I do not understand why, if I export the config from index.d.ts 
+// the constants aren't available when importing the plugin, however, if I
+// do the export from here the constants from config.ts are. Clearly, I am
+// missing something.
+
+export * from './config';
 
 // ------------------------------------------------------------------------------------
 
@@ -52,8 +59,6 @@ class BackgroundGeolocationDelegate extends com.marianhello.bgloc.PluginDelegate
     super();
 
     this.bgFbs = bgFbsInstance;
-
-    console.log( "BackgroundGeolocationDelegate::constructor():" );
 
     this.initCallbacksList();
 
@@ -266,6 +271,8 @@ class BackgroundGeolocationDelegate extends com.marianhello.bgloc.PluginDelegate
 */
 
 export class BackgroundGeolocationFbs extends Common {
+
+  public static TEST : string = "THIS IS A TEST";
 
   private bgGeo : any;
   private bgDelegate: any;

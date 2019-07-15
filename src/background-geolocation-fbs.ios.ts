@@ -7,10 +7,17 @@
 import { Common } from './background-geolocation-fbs.common';
 import { Location } from './location';
 import { LogEntry } from './logentry';
-import { BackgroundGeolocationConfig, LocationProviderTypes, AccuracyTypes, ActivityTypes  } from './config';
+import { BackgroundGeolocationConfig } from './config';
 
 import * as utils from 'tns-core-modules/utils/utils';
 import * as app from "tns-core-modules/application";
+
+// FIXME: I do not understand why, if I export the config from index.d.ts 
+// the constants aren't available when importing the plugin, however, if I
+// do the export from here the constants from config.ts are. Clearly, I am
+// missing something.
+
+export * from './config';
 
 // ----------------------------------------------------------------------------------------------------------------------
 

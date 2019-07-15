@@ -1,42 +1,30 @@
 /**
-* Background Geolocation Configuration  
-*/
-
-export class LocationProviderTypes { 
-  public static DISTANCE_FILTER_PROVIDER : number = 0;
-  public static ACTIVITY_PROVIDER : number = 1;
-  public static RAW_PROVIDER : number = 2;
-}
-
-/**
-* accuracy types
-*/
-
-export class AccuracyTypes {
-  public static HIGH_ACCURACY : number = 0;
-  public static MEDIUM_ACCURACY: number = 100;
-  public static LOW_ACCURACY: number = 1000;
-  public static PASSIVE_ACCURACY: number = 10000;
-}
-
-/**
-* iOS activity types
-*/
-
-export class ActivityTypes {
-  public static AutomotiveNavigation : string = "AutomotiveNavigation";
-  public static OtherNavigation : string = "OtherNavigation";
-  public static Fitness : string = "Fitness";
-  public static Other : string = "Other";
-}
-
-/**
 * config settings for background geolocation.
 *
 * Configs may consist of any subset of these settings. As a result, all are optional.
 *
 * @link https://github.com/Yermo/nativescript-background-geolocation-fbs#configureoptionsthen-success-catch-fail-
 */
+
+export enum LocationProviderTypes {
+  DISTANCE_FILTER_PROVIDER = 0,
+  ACTIVITY_PROVIDER = 1,
+  RAW_PROVIDER = 2
+}
+
+export enum AccuracyTypes {
+  HIGH_ACCURACY = 0,
+  MEDIUM_ACCURACY = 100,
+  LOW_ACCURACY = 1000,
+  PASSIVE_ACCURACY = 10000
+}
+
+export enum ActivityTypes {
+  AutomotiveNavigation = "AutomotiveNavigation",
+  OtherNavigation = "OtherNavigation",
+  Fitness = "Fitness",
+  Other = "Other"
+}
 
 export class BackgroundGeolocationConfig {
 
