@@ -71,6 +71,8 @@ declare class MAURBackgroundGeolocationFacade extends NSObject {
 
 	getLogEntriesFromLogEntryIdMinLogLevelFromString(limit: number, entryId: number, minLogLevel: string): NSArray<any>;
 
+	getNumLocations(): number;
+
 	getStationaryLocation(): MAURLocation;
 
 	getValidLocations(): NSArray<MAURLocation>;

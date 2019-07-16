@@ -755,6 +755,36 @@ export class BackgroundGeolocationFbs extends Common {
     });
   }
 
+  // -------------------------------------------------------------
+
+  /**
+  * get count of stored locations
+  *
+  * @return {Promise<number>}
+  */
+
+  getNumLocations() : Promise<number> {
+
+    let numLocations : number = 0;
+
+    return new Promise( ( resolve, reject ) => {
+
+      try {
+
+        // this returns a long
+
+        numLocations = this.bgGeo.getNumLocations();
+
+        console.log( "BackgroundGeolocationFbs::getNumLocations(): numLocations is:", numLocations );
+
+        resolve( numLocations );
+
+      } catch ( error ) {
+        reject( error );
+      }
+    });
+  }
+
   // ----------------------------------------------------------------
 
   /**
