@@ -1,22 +1,16 @@
 # @Yermo/nativescript-background-geolocation-fbs
 
-** THIS IS A WORK IN PROGRESS **
+This is a port of https://github.com/mauron85/cordova-plugin-background-geolocation to NativeScript. 
 
-This is a port of https://github.com/mauron85/cordova-plugin-background-geolocation to NativeScript. This version of the
-API relies heavily on promises instead of the callback structure used by the cordova plugin. See API below.
+This version of the API relies heavily on promises instead of the callback structure used by the cordova plugin. See API below.
 
 The majority of this documentation comes from the cordova plugin repository managed by @mauron85.
 
-## Heap Errors
+# Demo
 
-If you get javascript out of heap errors do when trying to build this use:
-
-export NODE_OPTIONS=--max-old-space-size=4096
+There is well commented NativeScript + Angular sample app in ./demo-angular which demonstrates the basics of using the plugin.
 
 ## Running the demo on Android
-
-I've put together a demo using NativeScript + Angular in ./demo-angular that loads the plugin and displays the raw data of
-the current location.
 
 You must have NativeScript installed and the 'tns' command must be in your path.
 
@@ -44,8 +38,9 @@ After installing the app, you must enable it in developer options. The setting u
 is *** Select mock locations app ***.
 
 If you are under Linux or MacOSX, there is a script in ./etc/fake_gps.sh that will 
-feed locations to the lockito app for testing. You must have the Android SDK installed and
-the 'adb' command must be in your path.
+feed locations to the lockito app for testing. 
+
+You must have the Android SDK installed and the 'adb' command must be in your path.
 
 - connect your device via USB
 - open the lockito app 
@@ -73,6 +68,12 @@ npm run demo-angular.ios
 
 The iOS simulator supports simulating location data. Go to Debug->Location->Freeway Drive for example.
 
+## Heap Errors
+
+If you get javascript out of heap errors do when trying to build this use:
+
+export NODE_OPTIONS=--max-old-space-size=4096
+
 ## Submitting issues
 
 All new issues should follow instructions in [ISSUE_TEMPLATE.md](/ISSUE_TEMPLATE.md).
@@ -84,7 +85,8 @@ In that case, also provide relevant parts of output of `adb logcat` command.
 
 # Android background service issues
 
-There are repeatedly reported issues with some android devices not working in the background. Check if your device model is on  [dontkillmyapp list](https://dontkillmyapp.com) before you report new issue. For more information check out [dontkillmyapp.com](https://dontkillmyapp.com/problem).
+There are repeatedly reported issues with some android devices not working in the background. 
+Check if your device model is on  [dontkillmyapp list](https://dontkillmyapp.com) before you report new issue. For more information check out [dontkillmyapp.com](https://dontkillmyapp.com/problem).
 
 ## Description
 
@@ -99,20 +101,11 @@ You can choose from three location location providers:
 
 See [Which provider should I use?](/PROVIDERS.md) for more information about providers.
 
-## Example Application
+## Status
 
-This repository contains a sample NativeScript/Angular app in the ngdemo directory which demonstrates how to use the plugin.
+As of this writing, posting locations to a server is not implemented. If it's a feature you need, please let me know.
 
-To build the sample application:
-
-```
-cd src
-npm run ngdemo.android
--or-
-npm run ngdemo.ios
-```
-
-## Installing the plugin - NOT COMPLETE
+## Installing the plugin
 
 ```
 tns plugin add @Yermo/nativescript-background-geolocation-fbs
@@ -421,6 +414,11 @@ Method will return locations which have not yet been posted to server.
 |----------------------------|---------|--------------------------------|
 | `locations`                | `Array` | collection of stored locations |
 
+### getNumLocations().then( ( numLocations )=> {successFn} ).catch( (error) => {errorFn} );
+Platform: iOS, Android
+
+Returns the number of locations stored in the cache.
+
 ### deleteLocation( locationId : number ).then( ()=> {successFn} ).catch( (error) => {errorFn} );
 Platform: iOS, Android
 
@@ -428,14 +426,9 @@ Delete location with locationId.
 
 ### deleteAllLocations().then( () => { successFn } ).catch( (error) => { errorFn });
 
-**Note:** You don't need to delete all locations. The plugin manages the number of stored locations automatically and the total count never exceeds the number as defined by `option.maxLocations`.
-
 Platform: iOS, Android
 
 Delete all stored locations.
-
-**FIXME:** Locations are not actually deleted from database to avoid gaps in locationId numbering.
-Instead locations are marked as deleted. Locations marked as deleted will not appear in output of `BackgroundGeolocation.getValidLocations`.
 
 ### switchMode(modeId).then( () => { successFn } ).catch( (error) => { errorFn } );
 
@@ -656,37 +649,9 @@ On Android devices it is recommended to have a notification in the drawer (optio
 Plugin should work with custom ROMS at least DISTANCE_FILTER_PROVIDER. But ACTIVITY_PROVIDER provider depends on Google Play Services.
 Usually ROMs don't include Google Play Services libraries. Strange bugs may occur, like no GPS locations (only from network and passive) and other. When posting issue report, please mention that you're using custom ROM.
 
-#### Multidex
-
-**Note:** Following section was kindly copied from [phonegap-plugin-push](https://github.com/phonegap/phonegap-plugin-push/blob/master/docs/INSTALLATION.md#multidex). Visit link for resolving issue with facebook plugin.
-
-If you have an issue compiling the app and you're getting an error similar to this (`com.android.dex.DexException: Multiple dex files define`):
-
-```
-UNEXPECTED TOP-LEVEL EXCEPTION:
-com.android.dex.DexException: Multiple dex files define Landroid/support/annotation/AnimRes;
-  at com.android.dx.merge.DexMerger.readSortableTypes(DexMerger.java:596)
-  at com.android.dx.merge.DexMerger.getSortedTypes(DexMerger.java:554)
-  at com.android.dx.merge.DexMerger.mergeClassDefs(DexMerger.java:535)
-  at com.android.dx.merge.DexMerger.mergeDexes(DexMerger.java:171)
-  at com.android.dx.merge.DexMerger.merge(DexMerger.java:189)
-  at com.android.dx.command.dexer.Main.mergeLibraryDexBuffers(Main.java:502)
-  at com.android.dx.command.dexer.Main.runMonoDex(Main.java:334)
-  at com.android.dx.command.dexer.Main.run(Main.java:277)
-  at com.android.dx.command.dexer.Main.main(Main.java:245)
-  at com.android.dx.command.Main.main(Main.java:106)
-```
-
-Then at least one other plugin you have installed is using an outdated way to declare dependencies such as `android-support` or `play-services-gcm`.
-This causes gradle to fail, and you'll need to identify which plugin is causing it and request an update to the plugin author, so that it uses the proper way to declare dependencies for cordova.
-See [this for the reference on the cordova plugin specification](https://cordova.apache.org/docs/en/5.4.0/plugin_ref/spec.html#link-18), it'll be usefull to mention it when creating an issue or requesting that plugin to be updated.
-
-Common plugins to suffer from this outdated dependency management are plugins related to *facebook*, *google+*, *notifications*, *crosswalk* and *google maps*.
-
 #### Android Permissions
 
 Android 6.0 "Marshmallow" introduced a new permissions model where the user can turn on and off permissions as necessary. When user disallow location access permissions, error configure callback will be called with error code: 2.
-
 
 #### Notification icons
 
@@ -706,16 +671,13 @@ Plugin will not work in XDK emulator ('Unimplemented API Emulation: BackgroundGe
 
 See [DEBUGGING.md](/DEBUGGING.md)
 
-## Geofencing
-There is nice cordova plugin [cordova-plugin-geofence](https://github.com/cowbell/cordova-plugin-geofence), which does exactly that. Let's keep this plugin lightweight as much as possible.
-
 ## Changelog
 
 See [CHANGES.md](/CHANGES.md)
 
 ## Licence ##
 
-[Apache License](http://www.apache.org/licenses/LICENSE-2.0)
+This plugin is based on work by @mauron85 and carries the same license. 
 
 Copyright (c) 2019 Yermo Lamers, Flying Brick Software, LLC
 

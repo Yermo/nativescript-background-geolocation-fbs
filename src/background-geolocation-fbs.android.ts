@@ -784,8 +784,6 @@ export class BackgroundGeolocationFbs extends Common {
 
         numLocations = this.bgGeo.getNumLocations();
 
-        console.log( "BackgroundGeolocationFbs::getNumLocations(): numLocations is:", numLocations );
-
         resolve( numLocations );
 
       } catch ( error ) {
